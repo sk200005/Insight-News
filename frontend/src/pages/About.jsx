@@ -12,26 +12,15 @@ const styles = `
   .dev-card:hover { transform: translateY(-4px); box-shadow: 0 20px 48px rgba(0,0,0,0.10) !important; }
 `;
 
-const developers = [
-  {
-    name: "Swayam Korde",
-    role: "Backend & AI/ML Developer",
-    email: "swayamkorde2005@gmail.com",
-    img: "/dev_backend_ai.png",
-    accent: "#0ea5e9",
-    bg: "#f0f9ff",
-    border: "#bae6fd",
-  },
-  {
-    name: "Nitish Panse",
-    role: "Frontend Developer",
-    email: "nitishpanse6@gmail.com",
-    img: "/dev_frontend_ui.png",
-    accent: "#8b5cf6",
-    bg: "#f5f3ff",
-    border: "#c4b5fd",
-  },
-];
+const developer = {
+  name: "Swayam Korde",
+  role: "FullStack & AI/ML Developer",
+  email: "swayamkorde2005@gmail.com",
+  img: "/swayam_photo.png",
+  accent: "#0ea5e9",
+  bg: "#f0f9ff",
+  border: "#bae6fd",
+};
 
 function About() {
   return (
@@ -76,54 +65,51 @@ function About() {
               Meet the Developers
             </h2>
             <p className="mt-3 text-base text-slate-500">
-              Built with purpose by two developers who care about informed reading.
+              Built with purpose by a developer who cares about informed reading.
             </p>
           </div>
 
-          <div className="mx-auto grid max-w-3xl gap-8 sm:grid-cols-2">
-            {developers.map((dev) => (
+          <div className="mx-auto flex justify-center max-w-sm">
+            <div
+              className="dev-card flex flex-col items-center rounded-2xl p-8 text-center w-full"
+              style={{
+                background: developer.bg,
+                border: `1px solid ${developer.border}`,
+                boxShadow: "0 4px 18px rgba(0,0,0,0.05)",
+              }}
+            >
               <div
-                key={dev.name}
-                className="dev-card flex flex-col items-center rounded-2xl p-8 text-center"
-                style={{
-                  background: dev.bg,
-                  border: `1px solid ${dev.border}`,
-                  boxShadow: "0 4px 18px rgba(0,0,0,0.05)",
-                }}
+                className="mb-6 h-44 w-44 overflow-hidden rounded-full shadow-md"
+                style={{ border: `3px solid ${developer.border}` }}
               >
-                <div
-                  className="mb-6 h-40 w-40 overflow-hidden rounded-2xl shadow-md"
-                  style={{ border: `2px solid ${dev.border}` }}
-                >
-                  <img
-                    src={dev.img}
-                    alt={`${dev.name} - ${dev.role}`}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-
-                <h3 className="text-xl font-black tracking-tight text-slate-900">
-                  {dev.name}
-                </h3>
-
-                <span
-                  className="mt-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.15em]"
-                  style={{ background: dev.border, color: dev.accent }}
-                >
-                  {dev.role}
-                </span>
-
-                <a
-                  href={`mailto:${dev.email}`}
-                  className="mt-4 text-sm font-medium transition-colors hover:underline"
-                  style={{ color: dev.accent }}
-                >
-                  {dev.email}
-                </a>
+                <img
+                  src={developer.img}
+                  alt={`${developer.name} - ${developer.role}`}
+                  className="h-full w-full object-cover object-top"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
-            ))}
+
+              <h3 className="text-xl font-black tracking-tight text-slate-900">
+                {developer.name}
+              </h3>
+
+              <span
+                className="mt-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.15em]"
+                style={{ background: developer.border, color: developer.accent }}
+              >
+                {developer.role}
+              </span>
+
+              <a
+                href={`mailto:${developer.email}`}
+                className="mt-4 text-sm font-medium transition-colors hover:underline"
+                style={{ color: developer.accent }}
+              >
+                {developer.email}
+              </a>
+            </div>
           </div>
         </section>
       </main>
