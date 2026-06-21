@@ -23,7 +23,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  process.env.VITE_API_BASE_URL
+  process.env.FRONTEND_URL
 ].filter(Boolean);
 
 app.use(
