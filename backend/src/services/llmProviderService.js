@@ -1,4 +1,4 @@
-let activeProvider = "gemini";
+let activeProvider = "groq";
 
 function getProviderStatus() {
   const configuredProviders = {

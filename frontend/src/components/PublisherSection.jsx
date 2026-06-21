@@ -40,16 +40,16 @@ function PublisherSection() {
           </button>
         </div>
 
-        <div className="grid grid-cols-3 gap-5 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5">
           {publisherLogos.map((publisher) => (
             <div
               key={publisher.label}
-              className="flex aspect-square items-center justify-center rounded-full border border-white/10 bg-white shadow-[0_10px_22px_rgba(15,23,42,0.06)]"
+              className="flex aspect-square items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white shadow-[0_10px_22px_rgba(15,23,42,0.06)]"
             >
               <img
                 src={publisher.src}
                 alt={publisher.label}
-                className="h-36 w-36 rounded-full object-cover sm:h-40 sm:w-40"
+                className="h-full w-full object-cover"
                 loading="lazy"
                 decoding="async"
               />

@@ -273,7 +273,7 @@ function News() {
           <div className="px-7 pt-6 pb-5 flex flex-col gap-5">
 
             {/* Row 1: title + reload */}
-            <div className="flex items-start justify-between gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#7fc6ff]/70">
                   News Dashboard

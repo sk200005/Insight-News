@@ -154,7 +154,7 @@ function ArticleCard({ article }) {
   return (
     <div
         className={`deferred-card group relative cursor-pointer overflow-hidden rounded-2xl border border-white/60 bg-white/95 shadow-[0_10px_28px_rgba(15,23,42,0.10)] transition-[max-height,transform,box-shadow,border-color,background-color] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:scale-[1.001] hover:border-slate-200 hover:bg-white hover:shadow-[0_16px_34px_rgba(15,23,42,0.12)] focus-visible:-translate-y-0.5 focus-visible:scale-[1.001] focus-visible:border-cyan-300 focus-visible:bg-white focus-visible:shadow-[0_18px_38px_rgba(34,211,238,0.16)] focus-visible:outline-none ${
-        expanded ? "max-h-[1180px]" : "max-h-[260px]"
+        expanded ? "max-h-[2500px] lg:max-h-[1180px]" : "max-h-[800px] lg:max-h-[260px]"
       }`}
       onClick={toggleExpand}
       onKeyDown={handleKeyDown}

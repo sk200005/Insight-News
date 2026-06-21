@@ -7,12 +7,12 @@ const LLM_PROVIDERS = [
   { id: "groq", label: "GroqCloud" },
 ];
 function getProviderLabel(provider) {
-  return LLM_PROVIDERS.find((item) => item.id === provider)?.label || "Gemini";
+  return LLM_PROVIDERS.find((item) => item.id === provider)?.label || "GroqCloud";
 }
 
 function Footer() {
   const [providerStatus, setProviderStatus] = useState({
-    activeProvider: "gemini",
+    activeProvider: "groq",
     configuredProviders: {},
     supportedProviders: LLM_PROVIDERS.map((provider) => provider.id),
   });
@@ -24,7 +24,7 @@ function Footer() {
       try {
         const res = await api.get("/bias/provider");
         setProviderStatus({
-          activeProvider: res.data?.activeProvider || "gemini",
+          activeProvider: res.data?.activeProvider || "groq",
           configuredProviders: res.data?.configuredProviders || {},
           supportedProviders:
             res.data?.supportedProviders || LLM_PROVIDERS.map((provider) => provider.id),

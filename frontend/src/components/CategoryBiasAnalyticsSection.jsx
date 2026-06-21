@@ -268,7 +268,7 @@ function CategoryBiasAnalyticsSection({ className = "" }) {
       ref={sectionRef}
       className={`rounded-[2.2rem] border border-[#48637f] bg-[linear-gradient(135deg,#374e68_0%,#425a75_45%,#4d6784_100%)] shadow-[0_20px_46px_rgba(43,60,79,0.18)] ${className}`.trim()}
     >
-      <div className="w-full px-12 py-10">
+      <div className="w-full px-5 py-8 sm:px-12 sm:py-10">
         <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="text-[2rem] font-semibold text-[#fbf8f1]">Category Bias Analytics</h2>
