@@ -13,8 +13,31 @@ const healthRoutes = require("./routes/health.routes");
 
 const app = express();
 
+const parseOrigins = (value) =>
+  String(value || "")
+    .split(",")
+    .map((origin) => origin.trim().replace(/\/+$/, ""))
+    .filter(Boolean);
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://insight-news-eight.vercel.app",
+  ...parseOrigins(process.env.FRONTEND_URL),
+  ...parseOrigins(process.env.CLIENT_ORIGIN),
+  ...parseOrigins(process.env.CLIENT_ORIGINS),
+  ...parseOrigins(process.env.CORS_ORIGIN),
+];
+
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin.replace(/\/+$/, ""))) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`Origin ${origin} is not allowed by CORS`));
+  },
   credentials: true
 }));
 app.use(express.json());

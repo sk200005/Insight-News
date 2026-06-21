@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import api from "../api/axios";
+import api, { API_BASE_URL } from "../api/axios";
 import ArticleCard from "../components/ArticleCard";
 import Navbar from "../components/Navbar";
 
@@ -39,7 +39,7 @@ function getApiErrorMessage(error) {
   }
 
   if (error.code === "ERR_NETWORK") {
-    return "Could not connect to the backend at http://localhost:8000.";
+    return `Could not connect to the backend at ${API_BASE_URL}.`;
   }
 
   return error.message || "Unknown error";
