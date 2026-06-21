@@ -1,0 +1,78 @@
+name: Automated 6-Hour News Pipeline
+
+on:
+  schedule:
+    # Runs every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allows you to manually trigger it from the GitHub Actions tab
+
+jobs:
+  reload-and-analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend to wake it up
+        run: |
+          echo "Waking up Render backend..."
+          curl -s -o /dev/null -w "%{http_code}" https://insight-news-l0yx.onrender.com/api/news
+          # Give it a few seconds to spin up if it was asleep
+          sleep 10
+
+      - name: Step 1 - Fetch New Articles (RSS)
+        id: fetch
+        run: |
+          echo "Fetching new articles..."
+          RESPONSE=$(curl -s -X GET "https://insight-news-l0yx.onrender.com/api/news/reload-news")
+          
+          # Extract article IDs as a JSON array string using jq
+          ARTICLE_IDS=$(echo "$RESPONSE" | jq -c '.articles | map(._id)')
+          
+          echo "Fetched IDs: $ARTICLE_IDS"
+          
+          if [ "$ARTICLE_IDS" = "[]" ] || [ "$ARTICLE_IDS" = "null" ]; then
+            echo "No new articles to process."
+            echo "continue=false" >> $GITHUB_ENV
+          else
+            echo "continue=true" >> $GITHUB_ENV
+            echo "ARTICLE_IDS=$ARTICLE_IDS" >> $GITHUB_ENV
+          fi
+
+      - name: Step 2 - Scrape Articles
+        if: env.continue == 'true'
+        run: |
+          echo "Scraping articles..."
+          RESPONSE=$(curl -s -X POST "https://insight-news-l0yx.onrender.com/api/scraper/run" \
+            -H "Content-Type: application/json" \
+            -d "{\"articleIds\": ${{ env.ARTICLE_IDS }}}")
+          
+          SCRAPED_IDS=$(echo "$RESPONSE" | jq -c '.articleIds')
+          echo "Scraped IDs: $SCRAPED_IDS"
+          
+          if [ "$SCRAPED_IDS" != "null" ]; then
+            echo "ARTICLE_IDS=$SCRAPED_IDS" >> $GITHUB_ENV
+          fi
+
+      - name: Step 3 - Summarize Articles
+        if: env.continue == 'true'
+        run: |
+          echo "Summarizing articles..."
+          RESPONSE=$(curl -s -X POST "https://insight-news-l0yx.onrender.com/api/summarize" \
+            -H "Content-Type: application/json" \
+            -d "{\"articleIds\": ${{ env.ARTICLE_IDS }}}")
+            
+          SUMMARIZED_IDS=$(echo "$RESPONSE" | jq -c '.articleIds')
+          echo "Summarized IDs: $SUMMARIZED_IDS"
+          
+          if [ "$SUMMARIZED_IDS" != "null" ]; then
+            echo "ARTICLE_IDS=$SUMMARIZED_IDS" >> $GITHUB_ENV
+          fi
+
+      - name: Step 4 - Run Bias Analysis
+        if: env.continue == 'true'
+        run: |
+          echo "Analyzing bias for articles..."
+          RESPONSE=$(curl -s -X POST "https://insight-news-l0yx.onrender.com/api/bias/run" \
+            -H "Content-Type: application/json" \
+            -d "{\"articleIds\": ${{ env.ARTICLE_IDS }}}")
+            
+          echo "Final Response: $RESPONSE"
+          echo "Pipeline completed successfully!"
