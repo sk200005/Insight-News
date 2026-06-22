@@ -42,7 +42,7 @@ jobs:
           echo "Scraping articles..."
           RESPONSE=$(curl -s -X POST "https://insight-news-l0yx.onrender.com/api/scraper/run" \
             -H "Content-Type: application/json" \
-            -d "{\"articleIds\": ${{ env.ARTICLE_IDS }}}")
+            -d "{\"articleIds\": $ARTICLE_IDS}")
           
           SCRAPED_IDS=$(echo "$RESPONSE" | jq -c '.articleIds')
           echo "Scraped IDs: $SCRAPED_IDS"
@@ -57,7 +57,7 @@ jobs:
           echo "Summarizing articles..."
           RESPONSE=$(curl -s -X POST "https://insight-news-l0yx.onrender.com/api/summarize" \
             -H "Content-Type: application/json" \
-            -d "{\"articleIds\": ${{ env.ARTICLE_IDS }}}")
+            -d "{\"articleIds\": $ARTICLE_IDS}")
             
           SUMMARIZED_IDS=$(echo "$RESPONSE" | jq -c '.articleIds')
           echo "Summarized IDs: $SUMMARIZED_IDS"
@@ -72,7 +72,7 @@ jobs:
           echo "Analyzing bias for articles..."
           RESPONSE=$(curl -s -X POST "https://insight-news-l0yx.onrender.com/api/bias/run" \
             -H "Content-Type: application/json" \
-            -d "{\"articleIds\": ${{ env.ARTICLE_IDS }}}")
+            -d "{\"articleIds\": $ARTICLE_IDS}")
             
           echo "Final Response: $RESPONSE"
           echo "Pipeline completed successfully!"
