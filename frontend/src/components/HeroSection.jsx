@@ -117,13 +117,13 @@ function HeroSection() {
 
           <div className="pt-2 lg:pt-0">
             <h1 className="hero-title max-w-4xl pl-6 text-[2.7rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:pl-8 sm:text-[3.3rem] lg:pl-14 lg:text-[3.95rem]">
-              <span>NEWS</span>
-              <span>SUMMARISER</span>
+              <span>NEWS AUTHENTICATOR</span>
+              {/* <span></span> */}
               <span>
                 <span className="text-[#ebd469]">&amp;</span>
                 <span className="hero-title-accent text-[#9cc7ef]">
-                  <span>BIAS</span>
-                  <span>ANALYSIS</span>
+                  {/* <span>BIAS</span> */}
+                  <span>ANALYZER</span>
                 </span>
               </span>
             </h1>
@@ -136,7 +136,7 @@ function HeroSection() {
           </div> */}
           <div className="h-24 lg:h-36" />
 
-          <div className="mt-10 max-w-3xl pb-4 lg:mt-12 lg:ml-6">
+          <div className="mt-12 max-w-3xl pb-4 lg:mt-30 lg:ml-6">
             <FlipText
               className="hero-subtitle font-serif text-3xl font-black leading-[0.98] tracking-[-0.03em] text-[#1f2023] sm:text-4xl lg:text-[4rem]"
               duration={2.2}
