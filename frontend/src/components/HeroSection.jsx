@@ -131,8 +131,9 @@ function HeroSection() {
               className="hero-subtitle font-serif text-3xl font-black leading-[0.98] tracking-[-0.03em] text-[#1f2023] sm:text-4xl lg:text-[4rem]"
               duration={2.2}
               delay={1.1}
+              loop={false}
             >
-              Read News beyond Headlines.
+              Read News beyond Headlines
             </FlipText>
 
             <div className="mt-7 flex flex-wrap gap-3">
