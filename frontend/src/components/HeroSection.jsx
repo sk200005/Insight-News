@@ -8,63 +8,63 @@ const logoBadges = [
   {
     id: "bbc",
     position: "top-[42%] left-[2.5%]",
-    shell: "h-40 w-40 xl:h-44 xl:w-44",
+    shell: "h-16 w-16 sm:h-20 sm:w-20 lg:h-40 lg:w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy.png",
     alt: "BBC News",
   },
   {
     id: "hindu",
     position: "top-[62%] left-[16%]",
-    shell: "h-40 w-40 xl:h-44 xl:w-44",
+    shell: "h-16 w-16 sm:h-20 sm:w-20 lg:h-40 lg:w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 2.png",
     alt: "The Hindu",
   },
   {
     id: "toi",
     position: "bottom-[2.5%] left-[2.5%]",
-    shell: "h-40 w-40 xl:h-44 xl:w-44",
+    shell: "h-16 w-16 sm:h-20 sm:w-20 lg:h-40 lg:w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 3.png",
     alt: "Times of India",
   },
   {
     id: "cnn",
     position: "bottom-[2.5%] left-[29.5%]",
-    shell: "h-40 w-40 xl:h-44 xl:w-44",
+    shell: "h-16 w-16 sm:h-20 sm:w-20 lg:h-40 lg:w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 4.png",
     alt: "CNN",
   },
   {
     id: "ht",
     position: "top-[42%] left-[29.5%]",
-    shell: "h-40 w-40 xl:h-44 xl:w-44",
+    shell: "h-16 w-16 sm:h-20 sm:w-20 lg:h-40 lg:w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 5.png",
     alt: "Hindustan Times",
   },
   {
     id: "ndtv",
     position: "top-[42%] right-[23%]",
-    shell: "h-40 w-40 xl:h-44 xl:w-44",
+    shell: "h-16 w-16 sm:h-20 sm:w-20 lg:h-40 lg:w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 6.png",
     alt: "NDTV 24x7",
   },
   {
     id: "indian-express",
     position: "top-[56%] right-[4%]",
-    shell: "h-40 w-40 xl:h-44 xl:w-44",
+    shell: "h-16 w-16 sm:h-20 sm:w-20 lg:h-40 lg:w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 7.png",
     alt: "The Indian Express",
   },
   {
     id: "india-today",
     position: "bottom-[2.5%] right-[4%]",
-    shell: "h-40 w-40 xl:h-44 xl:w-44",
+    shell: "h-16 w-16 sm:h-20 sm:w-20 lg:h-40 lg:w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 8.png",
     alt: "India Today",
   },
   {
     id: "wire",
     position: "bottom-[2.5%] right-[23%]",
-    shell: "h-40 w-40 xl:h-44 xl:w-44",
+    shell: "h-16 w-16 sm:h-20 sm:w-20 lg:h-40 lg:w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 9.png",
     alt: "The Wire",
   },
@@ -86,7 +86,7 @@ function HeroSection() {
       {logoBadges.map((badge) => (
         <div
           key={badge.id}
-          className={`absolute hidden items-center justify-center rounded-full border-2 border-white/90 bg-white/60 shadow-[0_8px_18px_rgba(15,23,42,0.08)] lg:flex ${badge.position} ${badge.shell}`}
+          className={`absolute flex items-center justify-center rounded-full border-2 border-white/90 bg-white/60 shadow-[0_8px_18px_rgba(15,23,42,0.08)] ${badge.position} ${badge.shell}`}
         >
           <div className="relative h-[98%] w-[98%] overflow-hidden rounded-full bg-white">
             <img
