@@ -85,7 +85,7 @@ function BiasBar({ article }) {
 function NewsCarouselCard({ article }) {
   return (
     <article
-      className="group flex h-full w-[min(78vw,19rem)] shrink-0 flex-col overflow-hidden rounded-[1.75rem] border border-slate-200/70 bg-white/90 shadow-[0_14px_34px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_46px_rgba(15,23,42,0.12)] sm:w-[18rem] lg:w-[19rem] xl:w-[20rem]"
+      className="group flex h-full w-[min(55vw,14rem)] shrink-0 flex-col overflow-hidden rounded-[1.25rem] border border-slate-200/70 bg-white/90 shadow-[0_14px_34px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_46px_rgba(15,23,42,0.12)] sm:w-[18rem] sm:rounded-[1.75rem] lg:w-[19rem] xl:w-[20rem]"
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
         {article.image ? (
@@ -106,14 +106,14 @@ function NewsCarouselCard({ article }) {
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-950/35 to-transparent" />
       </div>
 
-      <div className="flex flex-1 flex-col px-5 py-5">
+      <div className="flex flex-1 flex-col px-3 py-3 sm:px-5 sm:py-5">
         <div className="flex flex-1 flex-col">
           <div className="mb-3 flex items-center justify-between gap-3 text-[0.74rem] font-bold uppercase tracking-[0.24em] text-slate-400">
             <span>{article.source || "Latest Brief"}</span>
             <span>{article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : "Today"}</span>
           </div>
 
-          <h3 className="news-carousel-summary text-[1.08rem] font-semibold leading-8 text-slate-800">
+          <h3 className="news-carousel-summary text-[0.85rem] font-semibold leading-snug text-slate-800 sm:text-[1.08rem] sm:leading-8">
             {article.title?.trim() || "Fresh coverage and perspective highlights from the latest headlines."}
           </h3>
 
