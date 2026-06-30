@@ -1,68 +1,69 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import FlipText from "./FlipText";
 
 const heroLogoSrc = encodeURI("/webLogo/home.png");
 
 const logoBadges = [
   {
     id: "bbc",
-    position: "top-[42%] left-[3%]",
+    position: "top-[42%] left-[2.5%]",
     shell: "h-40 w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy.png",
     alt: "BBC News",
   },
   {
     id: "hindu",
-    position: "top-[60%] left-[14%]",
+    position: "top-[62%] left-[16%]",
     shell: "h-40 w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 2.png",
     alt: "The Hindu",
   },
   {
     id: "toi",
-    position: "bottom-6 left-[4%]",
+    position: "bottom-[2.5%] left-[2.5%]",
     shell: "h-40 w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 3.png",
     alt: "Times of India",
   },
   {
     id: "cnn",
-    position: "bottom-4 left-[30%]",
+    position: "bottom-[2.5%] left-[29.5%]",
     shell: "h-40 w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 4.png",
     alt: "CNN",
   },
   {
     id: "ht",
-    position: "top-[50%] left-[31%]",
+    position: "top-[42%] left-[29.5%]",
     shell: "h-40 w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 5.png",
     alt: "Hindustan Times",
   },
   {
     id: "ndtv",
-    position: "top-[40%] right-[22%]",
+    position: "top-[42%] right-[23%]",
     shell: "h-40 w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 6.png",
     alt: "NDTV 24x7",
   },
   {
     id: "indian-express",
-    position: "top-[58%] right-[9%]",
+    position: "top-[56%] right-[4%]",
     shell: "h-40 w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 7.png",
     alt: "The Indian Express",
   },
   {
     id: "india-today",
-    position: "bottom-7 right-[5%]",
+    position: "bottom-[2.5%] right-[4%]",
     shell: "h-40 w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 8.png",
     alt: "India Today",
   },
   {
     id: "wire",
-    position: "bottom-5 right-[22%]",
+    position: "bottom-[2.5%] right-[23%]",
     shell: "h-40 w-40 xl:h-44 xl:w-44",
     src: "/logos/image copy 9.png",
     alt: "The Wire",
@@ -85,13 +86,13 @@ function HeroSection() {
       {logoBadges.map((badge) => (
         <div
           key={badge.id}
-          className={`absolute hidden items-center justify-center rounded-full border-4 border-white/85 bg-white/70 shadow-[0_8px_18px_rgba(15,23,42,0.08)] lg:flex ${badge.position} ${badge.shell}`}
+          className={`absolute hidden items-center justify-center rounded-full border-2 border-white/90 bg-white/60 shadow-[0_8px_18px_rgba(15,23,42,0.08)] lg:flex ${badge.position} ${badge.shell}`}
         >
-          <div className="relative h-[82%] w-[82%] overflow-hidden rounded-full bg-white">
+          <div className="relative h-[98%] w-[98%] overflow-hidden rounded-full bg-white">
             <img
               src={badge.src}
               alt={badge.alt}
-              className="h-full w-full object-cover"
+              className="h-full w-full scale-[1.18] object-cover"
               loading="lazy"
               decoding="async"
             />
@@ -126,10 +127,13 @@ function HeroSection() {
           <div className="h-24 lg:h-36" />
 
           <div className="mt-10 max-w-3xl pb-4 lg:mt-12 lg:ml-6">
-            <p className="hero-subtitle font-serif text-3xl font-black leading-[0.98] tracking-[-0.03em] text-[#1f2023] sm:text-4xl lg:text-[4rem]">
-              Read the News beyond the Lines.
-            </p>
-            
+            <FlipText
+              className="hero-subtitle font-serif text-3xl font-black leading-[0.98] tracking-[-0.03em] text-[#1f2023] sm:text-4xl lg:text-[4rem]"
+              duration={2.2}
+              delay={1.1}
+            >
+              Read News beyond Headlines.
+            </FlipText>
 
             <div className="mt-7 flex flex-wrap gap-3">
               <Link

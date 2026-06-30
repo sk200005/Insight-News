@@ -81,8 +81,53 @@
   opacity: 0;
   transform: translateY(40px);
   animation: heroSubtitleReveal 0.9s ease forwards;
-  animation-delay: 1.1s;
+  animation-delay: 0.75s;
   will-change: transform, opacity;
+}
+
+.flip-word {
+  transform-style: preserve-3d;
+}
+
+.flip-char {
+  color: inherit;
+  -webkit-text-fill-color: transparent;
+  height: 1.2em;
+  line-height: 1.2em;
+  vertical-align: middle;
+  transform-style: preserve-3d;
+  animation: flipCharacter var(--flip-duration, 2.2s) var(--flip-delay, 0s)
+    var(--flip-iteration, infinite) ease;
+  will-change: transform;
+}
+
+.flip-char::before,
+.flip-char::after {
+  color: inherit;
+  -webkit-text-fill-color: currentColor;
+  content: attr(data-char);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  animation: flipCharacterFade var(--flip-duration, 2.2s) var(--flip-delay, 0s)
+    var(--flip-iteration, infinite) ease;
+}
+
+.flip-char::after {
+  transform: translate(-50%, -50%) translateZ(0.6em);
+}
+
+.flip-char::before {
+  transform: translate(-50%, -50%) rotateX(-90deg) translateZ(0.6em);
+  opacity: 0;
+  --flip-face-opacity: 1;
 }
 
 .hero-title,
@@ -106,6 +151,28 @@
   }
 }
 
+@keyframes flipCharacter {
+  0% {
+    transform: rotateX(0deg);
+  }
+
+  25%,
+  100% {
+    transform: rotateX(90deg);
+  }
+}
+
+@keyframes flipCharacterFade {
+  0% {
+    opacity: 1;
+  }
+
+  30%,
+  100% {
+    opacity: var(--flip-face-opacity, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-title span,
   .hero-subtitle {
@@ -113,6 +180,17 @@
     transform: none;
     animation: none;
     will-change: auto;
+  }
+
+  .flip-char {
+    animation: none;
+    transform: none;
+    will-change: auto;
+  }
+
+  .flip-char::before,
+  .flip-char::after {
+    animation: none;
   }
 }
 
