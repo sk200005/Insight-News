@@ -105,6 +105,16 @@ function HeroSection() {
         <div className="hidden lg:block" />
 
         <div className="flex flex-col">
+          <div className="mb-6 block w-full max-w-[16rem] pl-6 sm:max-w-[20rem] sm:pl-8 lg:hidden">
+            <img
+              src={heroLogoSrc}
+              alt="InSight AI hero logo"
+              className="w-full object-contain"
+              decoding="async"
+              fetchPriority="high"
+            />
+          </div>
+
           <div className="pt-2 lg:pt-0">
             <h1 className="hero-title max-w-4xl pl-6 text-[2.7rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:pl-8 sm:text-[3.3rem] lg:pl-14 lg:text-[3.95rem]">
               <span>NEWS</span>
