@@ -262,28 +262,28 @@ function News() {
     <div className="min-h-screen bg-[linear-gradient(135deg,#374e68_0%,#425a75_45%,#4d6784_100%)]">
       <Navbar />
 
-      <div className="w-full px-6 pb-20 pt-8 md:px-10 xl:px-16 space-y-5">
+      <div className="w-full px-3 pb-20 pt-4 sm:px-6 md:px-10 xl:px-16 space-y-4 sm:space-y-5">
 
         {/* ── Control Panel ── */}
-        <div className="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] shadow-[0_8px_32px_rgba(0,0,0,0.18)] overflow-hidden">
+        <div className="rounded-xl sm:rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] shadow-[0_8px_32px_rgba(0,0,0,0.18)] overflow-hidden">
 
           {/* Top accent bar */}
           <div className="h-[2px] w-full bg-[linear-gradient(90deg,transparent,rgba(125,211,252,0.6),transparent)]" />
 
-          <div className="px-7 pt-6 pb-5 flex flex-col gap-5">
+          <div className="px-3 pt-3 pb-3 sm:px-7 sm:pt-6 sm:pb-5 flex flex-col gap-3 sm:gap-5">
 
             {/* Row 1: title + reload */}
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-6">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#7fc6ff]/70">
+                <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.28em] sm:tracking-[0.32em] text-[#7fc6ff]/70">
                   News Dashboard
                 </p>
-                <h1 className="mt-1.5 text-3xl font-semibold tracking-tight text-white">
+                <h1 className="mt-1 sm:mt-1.5 text-xl sm:text-3xl font-semibold tracking-tight text-white">
                   {statusMessage
-                    ? <span className="text-base font-normal text-slate-300">{statusMessage}</span>
+                    ? <span className="text-sm sm:text-base font-normal text-slate-300">{statusMessage}</span>
                     : "Filter · Analyse · Relate"}
                 </h1>
-                <p className="mt-1.5 text-sm font-medium text-[#7fc6ff]/80">
+                <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm font-medium text-[#7fc6ff]/80">
                   {articleCountLabel}
                 </p>
               </div>
@@ -291,7 +291,7 @@ function News() {
               <button
                 onClick={reloadArticles}
                 disabled={loading}
-                className="shrink-0 flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-sky-500 px-5 py-2.5 text-sm font-bold uppercase tracking-[0.12em] text-white shadow-[0_4px_20px_rgba(6,182,212,0.45)] transition-all duration-200 hover:from-cyan-400 hover:to-sky-400 hover:shadow-[0_6px_28px_rgba(6,182,212,0.6)] hover:scale-[1.03] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+                className="shrink-0 flex items-center gap-2 sm:gap-2.5 rounded-lg sm:rounded-xl bg-gradient-to-r from-cyan-500 to-sky-500 px-3.5 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-bold uppercase tracking-[0.10em] sm:tracking-[0.12em] text-white shadow-[0_4px_20px_rgba(6,182,212,0.45)] transition-all duration-200 hover:from-cyan-400 hover:to-sky-400 hover:shadow-[0_6px_28px_rgba(6,182,212,0.6)] hover:scale-[1.03] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
               >
                 {loading ? (
                   <>
@@ -317,15 +317,15 @@ function News() {
             <div className="h-px w-full bg-white/[0.07]" />
 
             {/* Row 2: category chips + sort */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-2 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
 
               {/* Category filter track */}
-              <div className="inline-flex flex-wrap items-center gap-1.5 rounded-xl border border-white/[0.08] bg-white/[0.04] p-1">
+              <div className="inline-flex flex-wrap items-center gap-1 sm:gap-1.5 rounded-lg sm:rounded-xl border border-white/[0.08] bg-white/[0.04] p-0.5 sm:p-1">
                 {categories.map((item) => (
                   <button
                     key={item.value}
                     onClick={() => setCategory(item.value)}
-                    className={`rounded-lg px-4 py-2 text-sm font-semibold tracking-wide transition-all duration-200 ${
+                    className={`rounded-md sm:rounded-lg px-2 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-sm font-semibold tracking-wide transition-all duration-200 ${
                       category === item.value
                         ? "bg-[rgba(125,211,252,0.18)] text-cyan-200 shadow-[0_0_0_1px_rgba(125,211,252,0.35)]"
                         : "text-slate-400 hover:text-slate-200"
@@ -340,7 +340,7 @@ function News() {
               <select
                 value={sortOrder}
                 onChange={(event) => setSortOrder(event.target.value)}
-                className="self-start rounded-lg border border-white/[0.1] bg-[rgba(0,0,0,0.25)] px-3.5 py-2 text-sm font-medium text-slate-300 outline-none transition focus:border-cyan-400/60 focus:text-white sm:self-auto"
+                className="self-start rounded-lg border border-white/[0.1] bg-[rgba(0,0,0,0.25)] px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-xs sm:text-sm font-medium text-slate-300 outline-none transition focus:border-cyan-400/60 focus:text-white sm:self-auto"
               >
                 <option value="latest">Latest first</option>
                 <option value="oldest">Oldest first</option>
@@ -350,8 +350,8 @@ function News() {
             </div>
 
             {/* Row 3: region chips */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 pr-1">Region</span>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.18em] sm:tracking-[0.22em] text-slate-500 pr-0.5 sm:pr-1">Region</span>
               {[
                 { label: "All", value: "all" },
                 { label: "India", value: "india" },
@@ -360,7 +360,7 @@ function News() {
                 <button
                   key={item.value}
                   onClick={() => setRegion(item.value)}
-                  className={`rounded-md px-3.5 py-1.5 text-sm font-semibold tracking-wide transition-all duration-200 ${
+                  className={`rounded-md px-2.5 py-1 sm:px-3.5 sm:py-1.5 text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 ${
                     region === item.value
                       ? "bg-[rgba(52,211,153,0.18)] text-emerald-300 shadow-[0_0_0_1px_rgba(52,211,153,0.35)]"
                       : "text-slate-400 hover:text-slate-200"

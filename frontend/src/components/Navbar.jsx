@@ -217,7 +217,7 @@ function MobileMenu() {
       {/* Dropdown panel */}
       <div
         className={[
-          "absolute right-0 top-[calc(100%+0.6rem)] z-50 w-52 origin-top-right overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-[0_16px_40px_rgba(15,23,42,0.14)] backdrop-blur-md transition-all duration-200",
+          "absolute left-0 top-[calc(100%+0.6rem)] z-50 w-52 origin-top-left overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-[0_16px_40px_rgba(15,23,42,0.14)] backdrop-blur-md transition-all duration-200",
           open
             ? "scale-100 opacity-100 pointer-events-auto"
             : "scale-95 opacity-0 pointer-events-none",
