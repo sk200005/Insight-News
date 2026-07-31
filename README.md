@@ -45,3 +45,59 @@ frontend/
   ├── vite.config.js            # Vite build and development configuration
   ├── eslint.config.js          # ESLint code quality configuration
   └── index.html                # Entry HTML document
+
+---
+  Getting Started
+Prerequisites
+Backend: Node.js 18+, Python 3.9+, MongoDB instance (Local or Atlas)
+
+Frontend: Node.js 18+, npm
+---
+Backend Setup
+Navigate to the backend directory and install Node.js dependencies:
+
+Bash
+cd backend
+npm install
+Install Python dependencies for the AI pipeline:
+
+Bash
+cd src/Ai_pipeline
+pip install -r requirements.txt
+cd ../..
+Configure Environment Variables:
+Create a .env file in the backend/ directory with the following variables:
+
+Code snippet
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+GEMINI_API_KEY=your_gemini_api_key
+GROQ_API_KEY=your_groq_api_key
+Start the Express server:
+
+Bash
+npm start
+(Or run in development mode with nodemon)
+
+Bash
+npm run dev
+Frontend Setup
+Navigate to the frontend directory and install dependencies:
+
+Bash
+cd frontend
+npm install
+Start the Vite development server:
+
+Bash
+npm run dev
+Build for production:
+
+Bash
+npm run build
+Usage
+Access the frontend dashboard at http://localhost:5173 (default Vite development port).
+---
+The frontend communicates with the backend Express API running at http://localhost:5000.
+
+Browse aggregated RSS news stories, view automatically generated summaries, upload PDF news articles for extraction, and inspect political bias scores across different news outlets.
