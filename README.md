@@ -45,59 +45,119 @@ frontend/
   ├── vite.config.js            # Vite build and development configuration
   ├── eslint.config.js          # ESLint code quality configuration
   └── index.html                # Entry HTML document
+```
+## 🚀 Getting Started
+
+Follow these steps to set up the project locally.
 
 ---
-  Getting Started
-Prerequisites
-Backend: Node.js 18+, Python 3.9+, MongoDB instance (Local or Atlas)
 
-Frontend: Node.js 18+, npm
+## 📋 Prerequisites
+
+### Backend
+- Node.js **18+**
+- Python **3.9+**
+- MongoDB (Local or MongoDB Atlas)
+
+### Frontend
+- Node.js **18+**
+- npm
+
 ---
-Backend Setup
-Navigate to the backend directory and install Node.js dependencies:
 
-Bash
+## ⚙️ Backend Setup
+
+### 1. Install Node.js dependencies
+
+```bash
 cd backend
 npm install
-Install Python dependencies for the AI pipeline:
+```
 
-Bash
+### 2. Install Python AI Pipeline dependencies
+
+```bash
 cd src/Ai_pipeline
 pip install -r requirements.txt
 cd ../..
-Configure Environment Variables:
-Create a .env file in the backend/ directory with the following variables:
+```
 
-Code snippet
+### 3. Configure Environment Variables
+
+Create a `.env` file inside the `backend` directory.
+
+```env
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
 GEMINI_API_KEY=your_gemini_api_key
 GROQ_API_KEY=your_groq_api_key
-Start the Express server:
+```
 
-Bash
+### 4. Start the Backend Server
+
+```bash
 npm start
-(Or run in development mode with nodemon)
+```
 
-Bash
+### Development Mode
+
+```bash
 npm run dev
-Frontend Setup
-Navigate to the frontend directory and install dependencies:
+```
 
-Bash
+---
+
+## 🎨 Frontend Setup
+
+### 1. Install Dependencies
+
+```bash
 cd frontend
 npm install
-Start the Vite development server:
+```
 
-Bash
+### 2. Start Development Server
+
+```bash
 npm run dev
-Build for production:
+```
 
-Bash
+### 3. Build for Production
+
+```bash
 npm run build
-Usage
-Access the frontend dashboard at http://localhost:5173 (default Vite development port).
----
-The frontend communicates with the backend Express API running at http://localhost:5000.
+```
 
-Browse aggregated RSS news stories, view automatically generated summaries, upload PDF news articles for extraction, and inspect political bias scores across different news outlets.
+---
+
+## 💻 Usage
+
+After both servers are running:
+
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:5000
+
+### Features
+
+- 📰 Aggregates news from multiple RSS feeds
+- 🤖 AI-powered news summarization
+- ⚖️ Political bias analysis
+- 📄 PDF news document processing
+- 🔍 Intelligent news search and filtering
+
+---
+
+## 📄 License
+
+This project is intended for **academic and demonstration purposes**.
+
+---
+
+## 🙌 Acknowledgements
+
+- React
+- Vite
+- Express.js
+- MongoDB
+- Google Gemini API
+- Groq API
