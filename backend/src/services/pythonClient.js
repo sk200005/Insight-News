@@ -1,7 +1,8 @@
-const axios = require("axios");
+const axios = require("axios"); //Axios is used to make HTTP requests (GET, POST, etc.)
 
 const PYTHON_BIAS_URL =
   process.env.PYTHON_BIAS_URL || "http://127.0.0.1:9000/analyze-bias";
+
 const PYTHON_BIAS_TIMEOUT_MS = Number(process.env.PYTHON_BIAS_TIMEOUT_MS || 1500);
 
 async function analyzeLocalBiasSignals(text) {
@@ -20,7 +21,7 @@ async function analyzeLocalBiasSignals(text) {
       );
     }
 
-    if (error.code === "ECONNREFUSED") {
+    if (error.code === "ECONNREFUSED") {                             //Python server is not running
       throw new Error("Local bias analysis service is unavailable");
     }
 

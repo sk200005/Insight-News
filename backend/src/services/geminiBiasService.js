@@ -3,8 +3,8 @@ const { GoogleGenAI } = require("@google/genai");
 let ai;
 
 const GEMINI_MODEL = "models/gemini-2.5-flash";
-const GEMINI_TEMPERATURE = 0.1;
-const GEMINI_DELAY_MS = 2000;
+const GEMINI_TEMPERATURE = 0.1;       // 0 - 2 (0 deterministic, 2 creative)
+const GEMINI_DELAY_MS = 2000;         // avoid hitting Gemini's rate limits.
 const MAX_CONTEXT_LENGTH = 1800;
 
 function getGeminiClient() {
@@ -14,7 +14,7 @@ function getGeminiClient() {
 
   if (!ai) {
     ai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY,
+      apiKey: process.env.GEMINI_API_KEY,   // our gemini api key provided by SRE team in class
     });
   }
 
@@ -52,8 +52,8 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function clampScore(score) {
-  return Math.max(0, Math.min(1, score));
+function clampScore(score) {                 //scores stay between 0 and 1
+  return Math.max(0, Math.min(1, score)); 
 }
 
 function normalizeEnum(value, allowedValues, fallback) {
@@ -64,24 +64,24 @@ function normalizeEnum(value, allowedValues, fallback) {
   return allowedValues.includes(normalized) ? normalized : fallback;
 }
 
-function normalizeText(value, fallback = "") {
+function normalizeText(value, fallback = "") {      //If empty ("") returns a default value.
   const normalized = String(value || "").trim();
   return normalized || fallback;
 }
 
-function normalizeLoadedLanguageCount(result) {
-  if (typeof result?.loadedLanguageCount === "number") {
-    return Math.max(0, Math.round(result.loadedLanguageCount));
+function normalizeLoadedLanguageCount(result) {      // takes the loadedLanguageCount as input & ensure final loadedLanguageCount is not a negative value
+  if (typeof result?.loadedLanguageCount === "number") {   // if the loadedLanguageCount is a number
+    return Math.max(0, Math.round(result.loadedLanguageCount));   // ensures the final loadedLanguageCount is not a negative value
   }
 
-  if (Array.isArray(result?.loadedWords)) {
+  if (Array.isArray(result?.loadedWords)) {    // if loadedWords is an array
     return result.loadedWords.filter(Boolean).length;
   }
 
   return Math.max(0, Number(result?.loadedLanguageCount) || 0);
 }
 
-function normalizeArticleContext(article) {
+function normalizeArticleContext(article) {    
   return String(article?.biasText || article?.content || article?.summary || "")
     .trim()
     .slice(0, MAX_CONTEXT_LENGTH);

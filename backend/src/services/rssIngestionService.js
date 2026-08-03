@@ -55,20 +55,34 @@ async function updateExistingArticleCategory(link, sourceGroup, source) {
   return true;
 }
 
+/**
+  * const selectedFeed = {
+      name: "The Hindu",
+      url: "https://www.thehindu.com/news/national/feeder/default.rss",
+      category: "indianPolitics"
+    };
+    
+    selectedFeed is an object with the following properties:
+    - name: The name of the feed.
+    - url: The URL of the feed.
+    - category: The category of the feed.
+  */
+
+
 async function fetchArticleForCategory(selectedFeed) {
   const categoryFeeds = rssFeeds[selectedFeed.category] || [];
   const alternateFeeds = shuffleFeeds(
     categoryFeeds.filter((feed) => feed.url !== selectedFeed.url)
   );
-  const feedsToTry = [selectedFeed, ...alternateFeeds];
+  const feedsToTry = [selectedFeed, ...alternateFeeds];       //... operator spreads the array
 
   for (const feed of feedsToTry) {
     try {
-      const parsedFeed = await parser.parseURL(feed.url);
+      const parsedFeed = await parser.parseURL(feed.url);    // Downloads the RSS XML.
       const items = parsedFeed.items || [];
 
       for (const item of items) {
-        if (!item?.link) {
+        if (!item?.link) {            //Skip invalid articles
           continue;
         }
 
@@ -111,6 +125,27 @@ async function fetchArticleForCategory(selectedFeed) {
 
   return null;
 }
+
+
+
+
+
+//////////////////////////// Read this function - createCategoryFetcher ///////////////////////////////////////////
+
+/**
+ * const selectedFeed = {
+  name: "The Hindu",
+  url: "https://www.thehindu.com/news/national/feeder/default.rss",
+  category: "indianPolitics"
+};
+
+feedsToTry: [The Hindu, The Print, Op India, Scroll]
+
+feedsToTry is an array of objects with the following properties:
+- name: The name of the feed.
+- url: The URL of the feed.
+- category: The category of the feed.
+*/
 
 function createCategoryFetcher(selectedFeed) {
   let started = false;

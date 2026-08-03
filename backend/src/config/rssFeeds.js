@@ -28,3 +28,6 @@ const rssFeeds = {
 };
 
 module.exports = { rssFeeds };
+
+
+// rssFeeds is a JavaScript Object

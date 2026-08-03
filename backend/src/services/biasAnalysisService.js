@@ -4,6 +4,7 @@ const {
   updateArticleBias,
   markArticleBiasFailed,
 } = require("./articleBiasRepository");
+
 const crypto = require("crypto");
 const Article = require("../models/Article");
 const { analyzeLocalBiasSignals } = require("./pythonClient");
@@ -18,6 +19,7 @@ async function analyzePoliticalBiasBatch(articles) {
   }
   return geminiBatch(articles);
 }
+
 const {
   getSourceLean,
   calculateLeanDeviation,

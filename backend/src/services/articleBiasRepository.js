@@ -8,16 +8,16 @@ async function fetchArticlesForBiasAnalysis(batchSize = DEFAULT_BATCH_SIZE, arti
     processingStatus: { $in: ["scraped", "analyzed"] },
   };
 
-  if (Array.isArray(articleIds) && articleIds.length > 0) {
+  if (Array.isArray(articleIds) && articleIds.length > 0) {  // if articleId is present and not empty , insert it into query to fetch particular articles
     query._id = { $in: articleIds };
   }
 
   return Article.find(query)
-    .sort({ publishedAt: -1 })
+    .sort({ publishedAt: -1 }) // sort by published date
     .limit(batchSize);
 }
 
-async function updateArticleBias(articleId, bias, metadata = {}) {
+async function updateArticleBias(articleId, bias, metadata = {}) { // update the bias of article
   return Article.findByIdAndUpdate(
     articleId,
     {
