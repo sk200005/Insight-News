@@ -1,7 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import FlipText from "./FlipText";
-
 const heroLogoSrc = encodeURI("/webLogo/home.png");
 
 const logoBadges = [
@@ -165,14 +163,11 @@ function HeroSection() {
 
           {/* Read News subtitle + CTA */}
           <div className="max-w-3xl pb-4">
-            <FlipText
+            <h2
               className="hero-subtitle font-serif text-3xl font-black leading-[0.98] tracking-[-0.03em] text-[#1f2023] sm:text-4xl"
-              duration={2.2}
-              delay={1.1}
-              loop={false}
             >
               Read News beyond Headlines
-            </FlipText>
+            </h2>
 
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
@@ -212,14 +207,11 @@ function HeroSection() {
           <div className="h-24 lg:h-36" />
 
           <div className="mt-12 max-w-3xl pb-4 lg:ml-6 lg:mt-30">
-            <FlipText
+            <h2
               className="hero-subtitle font-serif text-3xl font-black leading-[0.98] tracking-[-0.03em] text-[#1f2023] sm:text-4xl lg:text-[4rem]"
-              duration={2.2}
-              delay={1.1}
-              loop={false}
             >
               Read News beyond Headlines
-            </FlipText>
+            </h2>
 
             <div className="mt-7 flex flex-wrap gap-3">
               <Link

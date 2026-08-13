@@ -43,6 +43,9 @@ app.use(cors({
 app.use(express.json());
 app.use("/uploads", express.static(path.resolve(__dirname, "../uploads")));
 
+// Lightweight health check route for monitoring (e.g., UptimeRobot)
+app.get("/health", (req, res) => res.status(200).json({ status: "ok" }));
+
 app.use("/api", healthRoutes);
 app.use("/api/rss", rssRoutes);
 app.use("/api/articles", articleRoutes);
