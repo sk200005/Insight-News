@@ -18,7 +18,14 @@ function extractParagraphBlocks($, selectors) {
     const paragraphs = $(selector)
       .map((_, element) => normalizeParagraph($(element).text()))
       .get()
-      .filter(Boolean);
+      .filter((text) => {
+        if (!text) return false;
+        // Filter out subscription boilerplate text common in The Hindu and other sites
+        if (text.includes("Your active subscription")) return false;
+        if (text.includes("Account subscription benefits")) return false;
+        if (text.includes("Unlock these with Subscription")) return false;
+        return true;
+      });
 
     if (paragraphs.length > 0) {
       return paragraphs;
@@ -31,6 +38,8 @@ function extractParagraphBlocks($, selectors) {
 function buildScrapedContent($, article) {
   const paragraphBlocks = extractParagraphBlocks($, [
     "article p",
+    "[itemprop='articleBody'] p",
+    ".articlebodycontent p",
     "[data-testid='article-body'] p",
     ".article-body p",
     "main p",
