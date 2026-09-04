@@ -3,7 +3,7 @@ const axios = require("axios"); //Axios is used to make HTTP requests (GET, POST
 const PYTHON_BIAS_URL =
   process.env.PYTHON_BIAS_URL || "http://127.0.0.1:9000/analyze-bias";
 
-const PYTHON_BIAS_TIMEOUT_MS = Number(process.env.PYTHON_BIAS_TIMEOUT_MS || 1500);
+const PYTHON_BIAS_TIMEOUT_MS = Number(process.env.PYTHON_BIAS_TIMEOUT_MS || 15000);
 
 async function analyzeLocalBiasSignals(text) {
   try {
