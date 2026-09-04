@@ -64,7 +64,7 @@ const getNewsArticles = async (req, res) => {
     const requestedLimit = Number.parseInt(req.query.limit, 10);
     const query = {
       $or: [
-        { processingStatus: "bias_analyzed" },
+        { processingStatus: { $in: ["analyzed", "bias_analyzed"] } },
         {
           articleOrigin: "pdf_upload",
           summary: { $exists: true, $ne: "" },

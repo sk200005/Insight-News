@@ -200,7 +200,7 @@ function ArticleCard({ article }) {
                   </>
                 )}
                 <span className="mx-2">•</span>
-                {new Date(article.publishedAt).toLocaleDateString()}
+                {new Date(article.publishedAt).toLocaleDateString("en-GB")}
               </p>
 
               {summaryPoints.length > 0 ? (
