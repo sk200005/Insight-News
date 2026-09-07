@@ -17,6 +17,7 @@ const summarizationRoutes = require("./src/routes/summarizationRoutes");
 const analyticsRoutes = require("./src/routes/analyticsRoutes");
 const recommendRoutes = require("./src/routes/recommendRoutes");
 const healthRoutes = require("./src/routes/health.routes");
+const factCheckRoutes = require("./src/routes/factCheckRoutes");
 
 
 const app = express();                                      //Calling it (express()) function creates an Express application (server)
@@ -82,6 +83,7 @@ app.use("/api/analytics", analyticsRoutes);
 app.use("/api/recommend", recommendRoutes);
 app.use("/api/bias", biasRoutes);
 app.use("/api/uploads", uploadRoutes);
+app.use("/api/fact-check", factCheckRoutes);
 app.use("/api/summarize", summarizationRoutes);
 
 
