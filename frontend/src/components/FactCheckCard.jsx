@@ -1,4 +1,5 @@
-import React, { memo, useState } from "react";
+import React, { memo, useState, useEffect } from "react";
+import api from "../api/axios";
 
 function getVerdictBadgeStyle(rating) {
   const normalized = String(rating || "").trim().toLowerCase();
@@ -40,7 +41,42 @@ function formatDate(dateStr) {
 
 function FactCheckCard({ factCheck }) {
   const [imgError, setImgError] = useState(false);
-  const hasImage = Boolean(factCheck.image) && !imgError;
+  const [actualImage, setActualImage] = useState(null);
+  const [isLoadingActualImage, setIsLoadingActualImage] = useState(false);
+
+  // Lazy-load the actual article image
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchRealImage = async () => {
+      if (!factCheck.url) return;
+      
+      try {
+        setIsLoadingActualImage(true);
+        const res = await api.get("/fact-check/image", {
+          params: { url: factCheck.url },
+        });
+
+        if (mounted && res.data?.success && res.data?.imageUrl) {
+          setActualImage(res.data.imageUrl);
+        }
+      } catch (error) {
+        // Silently fail and fallback to favicon
+        console.error("Failed to fetch actual image", error);
+      } finally {
+        if (mounted) setIsLoadingActualImage(false);
+      }
+    };
+
+    fetchRealImage();
+
+    return () => {
+      mounted = false;
+    };
+  }, [factCheck.url]);
+
+  const displayImage = actualImage || factCheck.image;
+  const hasImage = Boolean(displayImage) && !imgError;
   const verdictStyle = getVerdictBadgeStyle(factCheck.rating);
 
   return (
@@ -54,14 +90,30 @@ function FactCheckCard({ factCheck }) {
         {/* Image / Placeholder */}
         <div className="relative flex h-48 w-full flex-shrink-0 items-center justify-center overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 sm:h-auto sm:w-72 sm:self-stretch">
           {hasImage ? (
-            <img
-              src={factCheck.image}
-              alt={factCheck.publisher}
-              className="h-16 w-16 rounded-xl object-contain transition-[transform,filter] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
-              loading="lazy"
-              decoding="async"
-              onError={() => setImgError(true)}
-            />
+            <>
+              {/* Shimmer loading overlay for the actual image */}
+              {isLoadingActualImage && !actualImage && (
+                <div className="absolute inset-0 z-10 animate-pulse bg-slate-200/50 backdrop-blur-[2px]" />
+              )}
+              <img
+                src={displayImage}
+                alt={factCheck.publisher}
+                className={`transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05] ${
+                  actualImage
+                    ? "h-full w-full object-cover" // Full cover for actual image
+                    : "h-16 w-16 rounded-xl object-contain" // Centered logo for favicon
+                }`}
+                loading="lazy"
+                decoding="async"
+                onError={() => {
+                  if (actualImage) {
+                    setActualImage(null); // Fallback to favicon if real image fails to load
+                  } else {
+                    setImgError(true);
+                  }
+                }}
+              />
+            </>
           ) : (
             <div className="flex flex-col items-center gap-2">
               <svg

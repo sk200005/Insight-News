@@ -1,4 +1,5 @@
 const axios = require("axios");
+const cheerio = require("cheerio");
 
 const FACTCHECK_API_URL =
   "https://factchecktools.googleapis.com/v1alpha1/claims:search";
@@ -117,4 +118,34 @@ const searchFactChecks = async (req, res) => {
   }
 };
 
-module.exports = { searchFactChecks };
+const fetchArticleImage = async (req, res) => {
+  try {
+    const targetUrl = req.query.url;
+
+    if (!targetUrl || !targetUrl.startsWith("http")) {
+      return res.status(400).json({ success: false, error: "Valid URL is required" });
+    }
+
+    const response = await axios.get(targetUrl, {
+      timeout: 4000,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+      }
+    });
+
+    const $ = cheerio.load(response.data);
+    const ogImage = $('meta[property="og:image"]').attr('content') || $('meta[name="twitter:image"]').attr('content');
+
+    if (ogImage) {
+      // Handle relative URLs
+      const absoluteImageUrl = new URL(ogImage, targetUrl).href;
+      return res.json({ success: true, imageUrl: absoluteImageUrl });
+    }
+
+    return res.json({ success: false, error: "No image found" });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: "Failed to fetch image" });
+  }
+};
+
+module.exports = { searchFactChecks, fetchArticleImage };
