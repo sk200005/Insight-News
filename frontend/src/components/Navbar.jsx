@@ -7,6 +7,7 @@ const navLogoSrc = "/headLogo/insight-logo.png";
 const NAV_ITEMS = [
   { label: "Home", to: "/" },
   { label: "News", to: "/news" },
+  { label: "Fact Check", to: "/fact-check" },
   { label: "Bias Analysis", to: "/bias-analysis" },
   { label: "About", to: "/about" },
 ];

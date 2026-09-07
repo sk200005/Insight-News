@@ -8,6 +8,7 @@ const newsRoutes = require("./routes/newsRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const recommendRoutes = require("./routes/recommendRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
+const factCheckRoutes = require("./routes/factCheckRoutes");
 
 const healthRoutes = require("./routes/health.routes");
 
@@ -53,6 +54,7 @@ app.use("/api/news", newsRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/recommend", recommendRoutes);
 app.use("/api/uploads", uploadRoutes);
+app.use("/api/fact-check", factCheckRoutes);
 app.use("/api", scraperRoutes);
 
 module.exports = app;
