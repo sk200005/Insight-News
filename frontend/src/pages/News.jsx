@@ -54,10 +54,17 @@ function News() {
   const [sortOrder, setSortOrder] = useState("latest");
 
   const fetchArticles = async (selectedCategory = "all") => {
-    const params =
-      selectedCategory !== "all" ? { category: selectedCategory } : undefined;
-    const res = await api.get("/news", { params });
-    setArticles(res.data);
+    try {
+      setLoading(true);
+      const params =
+        selectedCategory !== "all" ? { category: selectedCategory } : undefined;
+      const res = await api.get("/news", { params });
+      setArticles(res.data);
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const regionFilteredArticles = useMemo(
@@ -374,18 +381,41 @@ function News() {
           </div>
         </div>
 
+        {/* ── Loading skeleton ── */}
+        {loading && articles.length === 0 && (
+          <section className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-2xl border border-white/[0.08] bg-white/[0.06] p-8"
+              >
+                <div className="flex flex-col sm:flex-row gap-6">
+                  <div className="h-32 w-full sm:w-72 rounded-xl bg-white/[0.08]" />
+                  <div className="flex-1 space-y-4">
+                    <div className="h-6 w-3/4 rounded bg-white/[0.08]" />
+                    <div className="h-4 w-1/2 rounded bg-white/[0.06]" />
+                    <div className="h-4 w-full rounded bg-white/[0.05]" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
         {/* ── Article list ── */}
-        <section className="space-y-4">
-          {sortedArticles.length > 0 ? (
-            sortedArticles.map((article) => (
-              <ArticleCard key={article._id} article={article} />
-            ))
-          ) : (
-            <div className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-6 py-10 text-center text-sm text-slate-400">
-              No articles match the current filters yet.
-            </div>
-          )}
-        </section>
+        {!loading && (
+          <section className="space-y-4">
+            {sortedArticles.length > 0 ? (
+              sortedArticles.map((article) => (
+                <ArticleCard key={article._id} article={article} />
+              ))
+            ) : (
+              <div className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-6 py-10 text-center text-sm text-slate-400">
+                No articles match the current filters yet.
+              </div>
+            )}
+          </section>
+        )}
 
       </div>
     </div>
