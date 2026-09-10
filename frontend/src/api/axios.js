@@ -1,12 +1,10 @@
 import axios from "axios";
 
-const fallbackApiBaseUrl = import.meta.env.PROD
-  ? "http://16.171.198.202"
+const API_BASE_URL = import.meta.env.PROD
+  ? ""
   : "http://localhost:8000";
 
-export const API_BASE_URL = (
-  import.meta.env.VITE_API_BASE_URL || fallbackApiBaseUrl
-).replace(/\/+$/, "");
+export { API_BASE_URL };
 
 const api = axios.create({
   baseURL: `${API_BASE_URL}/api`,
