@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const fallbackApiBaseUrl = import.meta.env.PROD
-  ? "https://insight-news-l0yx.onrender.com"
+  ? "http://16.171.198.202"
   : "http://localhost:8000";
 
 export const API_BASE_URL = (
