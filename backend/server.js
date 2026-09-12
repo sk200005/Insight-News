@@ -7,7 +7,7 @@ const path = require("path");
 
 const PORT = process.env.PORT || 8000;
 
-const rssRoutes = require("./src/routes/rssRoutes");       //Each file contains related APIs.
+// const rssRoutes = require("./src/routes/rssRoutes");       // NOT USED: Superseded by newsRoutes.js handling /reload-news
 const newsRoutes = require("./src/routes/newsRoutes");
 const scraperRoutes = require("./src/routes/scraperRoutes");
 const articleRoutes = require("./src/routes/articleRoutes");
@@ -75,7 +75,7 @@ mongoose.connect(mongoUri, {
   });
 
 app.use("/api", healthRoutes);
-app.use("/api/rss", rssRoutes);
+// app.use("/api/rss", rssRoutes);             // NOT USED: Superseded by newsRoutes.js handling /reload-news
 app.use("/api/news", newsRoutes);              //If a request starts with /api/news, send it to newsRoutes to handle it.
 app.use("/api/scraper", scraperRoutes);
 app.use("/api/articles", articleRoutes);

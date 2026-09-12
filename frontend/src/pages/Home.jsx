@@ -1,3 +1,11 @@
+/*
+// ==========================================
+// NOT USED: Home.jsx
+// Reason: This page component is not included in the application's React Router (`App.jsx`).
+// The root path (`/`) points to `LandingPage.jsx`. Also, this page is the only one making
+// a request to the obsolete `/api/rss/fetch` endpoint.
+// ==========================================
+
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 
@@ -26,3 +34,4 @@ const Home = () => {
 };
 
 export default Home;
+*/

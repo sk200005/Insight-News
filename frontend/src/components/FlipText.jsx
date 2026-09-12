@@ -1,3 +1,10 @@
+/*
+// ==========================================
+// NOT USED: FlipText.jsx
+// Reason: This component is completely unreferenced across the entire 
+// frontend application. No page or component imports or renders it.
+// ==========================================
+
 import React, { useMemo } from "react";
 
 function FlipText({
@@ -72,3 +79,4 @@ function FlipText({
 }
 
 export default FlipText;
+*/

@@ -18,7 +18,7 @@ const Article = require("../models/Article");
  */
 function getAnalyticsBiasExpression() {
   return {
-    $ifNull: [
+    $ifNull: [                   //$ifNull: [value, fallback]
       "$bias.biasScoreFinal",
       {
         $ifNull: [
@@ -44,8 +44,8 @@ const getAllArticles = async (req, res) => {
 
     const query = category ? { category } : {};
 
-    const articles = await Article.find(query)
-      .sort({ createdAt: -1, publishedAt: -1 });
+    const articles = await Article.find(query)       // find all articles with category (if specified), 
+      .sort({ createdAt: -1, publishedAt: -1 });     // sort by createdAt and then by publishedAt in descending order
 
     res.status(200).json(articles);
   } catch (error) {
@@ -86,40 +86,55 @@ const getScrapedArticles = async (req, res) => {
  * Motive: Retrieves ready-to-display news articles (either NLP & bias analyzed or verified PDF uploads),
  * with optional category filtering and result limits for feed/homepage display.
  */
+
+// This function is an Express controller that fetches 
+// news articles from MongoDB and sends them as JSON.
 const getNewsArticles = async (req, res) => {
-  try {
+  try {      // For eg. news?category=sports&limit=10
     const category =
       req.query.category && req.query.category !== "all"
         ? req.query.category
         : undefined;
+    // Limits the number of articles to be fetched to 10 ? means if the limit is not provided then it will fetch 10 articles
     const requestedLimit = Number.parseInt(req.query.limit, 10);
-    const query = {
+    //Checks whether the article has been processed (analyzed and bias analyzed) or 
+    // not or if the article is from pdf upload and has summary and bias
+    const query = {     
+      // filter/condition object that tells MongoDB which documents to find.
       $or: [
         { processingStatus: { $in: ["analyzed", "bias_analyzed"] } },
         {
           articleOrigin: "pdf_upload",
-          summary: { $exists: true, $ne: "" },
-          bias: { $exists: true, $ne: null },
+          summary: { $exists: true, $ne: "" }, // checks if the summary exists and is not empty
+          bias: { $exists: true, $ne: null },  // checks if the bias exists and is not null
         },
       ],
     };
 
     if (category) {
-      query.category = category;
+      query.category = category;    
+      //query is a JavaScript object, you can 
+      // add a new property to it even though it was declared with const.
+      //So query.category simply means:
+      // Access or create the category property inside the query object.
     }
 
-    let articleQuery = Article.find(query).sort({ createdAt: -1, publishedAt: -1 });
+    let articleQuery = Article.find(query).sort({ createdAt: -1, publishedAt: -1 }); //newest first
 
     if (Number.isFinite(requestedLimit) && requestedLimit > 0) {
       articleQuery = articleQuery.limit(requestedLimit);
     }
 
-    const articles = await articleQuery;
+    const articles = await articleQuery;  // "await" causes Mongoose to execute the query against MongoDB.
 
-    res.status(200).json(articles);
+    res.status(200).json(articles);  //returns the articles as JSON
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+
+  //Article.find(query) creates a Mongoose Query object, which is not executed immediately. 
+  // When we use await, the query is executed against MongoDB, and the variable receives the resulting documents. 
+  // So await Article.find(query).sort(...) directly gives us the matching articles as an array.
 };
 
 /**
@@ -140,10 +155,13 @@ const getCategoryBiasAnalytics = async (req, res) => {
           analyticsBiasScore: {
             $cond: [
               { $ne: ["$bias.biasScore", null] },
-              "$bias.biasScore",
+              "$bias.biasScore",       //$ before a field name means "take the value from this document's field."
               "$biasScore",
             ],
           },
+          // IF bias.biasScore is NOT null 
+          //    → use bias.biasScore
+          // ELSE → use biasScore
         },
       },
       {
@@ -191,10 +209,13 @@ const getCategoryBiasAnalytics = async (req, res) => {
 const getBiasSummaryAnalytics = async (req, res) => {
   try {
     const matchStage = {
-      processingStatus: "bias_analyzed",
+      processingStatus: "bias_analyzed",  /// only articles that are bias_analyzed
     };
     const analyticsBiasScore = getAnalyticsBiasExpression();
 
+    // Here we are using Promise.all to fetch all the 7 metrics concurrently/parallelly
+    // Because we are making 7 different requests to the database and if we do it sequentially then it will take more time
+    // If we do it concurrently then it will take less time
     const [
       categories,
       overallStats,
@@ -204,7 +225,7 @@ const getBiasSummaryAnalytics = async (req, res) => {
       sourceContribution,
       politicalLeanDistribution,
     ] = await Promise.all([
-      Article.aggregate([
+      Article.aggregate([          //calculates bias statistics for each category.
         { $match: matchStage },
         {
           $addFields: {
@@ -220,9 +241,9 @@ const getBiasSummaryAnalytics = async (req, res) => {
         {
           $group: {
             _id: "$category",
-            avgBias: { $avg: "$analyticsBiasScore" },
-            totalArticles: { $sum: 1 },
-          },
+            avgBias: { $avg: "$analyticsBiasScore" },      // Calculates the average bias for each group.
+            totalArticles: { $sum: 1 },                // calculates total articles
+          }, 
         },
         {
           $project: {
@@ -240,11 +261,14 @@ const getBiasSummaryAnalytics = async (req, res) => {
           },
         },
       ]),
-      Article.aggregate([
+
+
+      Article.aggregate([         // calculates the overall bias statistics across all articles.   
         { $match: matchStage },
         {
           $addFields: {
-            analyticsBiasScore,
+            analyticsBiasScore,       // It doesn't permanently add this field to your database. 
+                                      // It's available during this aggregation.
           },
         },
         {
@@ -256,18 +280,27 @@ const getBiasSummaryAnalytics = async (req, res) => {
           $group: {
             _id: null,
             overallBias: { $avg: "$analyticsBiasScore" },
-            totalArticles: { $sum: 1 },
+            totalArticles: { $sum: 1 },    // Article 1 → +1     //Article 2 → +1  //Article 3 → +1
           },
         },
         {
           $project: {
-            _id: 0,
+            _id: 0,    //remove _id from output.
             overallBias: { $round: ["$overallBias", 3] },
-            totalArticles: 1,
+            totalArticles: 1,      //keep totalArticles
           },
         },
+        // [
+      //   {
+      //     overallBias: 0.532,
+      //     totalArticles: 100
+      //   }
+      // ]
       ]),
-      Article.aggregate([
+      
+
+
+      Article.aggregate([        //finds the single most biased article.
         { $match: matchStage },
         {
           $addFields: {
@@ -300,10 +333,12 @@ const getBiasSummaryAnalytics = async (req, res) => {
           },
         },
       ]),
-      Article.aggregate([
+
+
+      Article.aggregate([       //finds the top 3 news sources based on their neutrality score.
         { $match: matchStage },
         {
-          $addFields: {
+          $addFields: {        // Add two temporary fields: analyticsBiasScore and sourceNeutralityScore
             analyticsBiasScore,
             sourceNeutralityScore: {
               $ifNull: [
@@ -356,6 +391,8 @@ const getBiasSummaryAnalytics = async (req, res) => {
           },
         },
       ]),
+
+
       Article.aggregate([
         { $match: matchStage },
         {
