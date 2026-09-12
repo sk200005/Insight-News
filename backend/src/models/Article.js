@@ -125,6 +125,10 @@ const articleSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
+// pre() registers a middleware/hook that runs before "save" operation.
+// and function setDerivedArticleFields() is the function will run after "save" ops
+
+
 articleSchema.pre("save", function setDerivedArticleFields() {
   if (!this.summaryText && this.summary) {
     this.summaryText = this.summary;

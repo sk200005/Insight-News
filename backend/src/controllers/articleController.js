@@ -1,5 +1,21 @@
+// ==========================================
+// ARTICLE CONTROLLER OVERVIEW:
+// ==========================================
+// This controller directly queries and aggregates data from the MongoDB "Article" model.
+// It handles:
+// 1. Fetching news feeds with optional category and limit filters.
+// 2. Fetching scraped/in-progress articles.
+// 3. Calculating category-level and system-wide bias analytics using MongoDB Aggregation Pipelines.
+// 4. Recommending related articles based on category and sentiment.
+// ==========================================
+
 const Article = require("../models/Article");
 
+/**
+ * Helper: getAnalyticsBiasExpression
+ * Motive: Resolves the standardized bias score across varying article schema versions
+ * (prioritizes bias.biasScoreFinal -> bias.biasScore -> root biasScore).
+ */
 function getAnalyticsBiasExpression() {
   return {
     $ifNull: [
@@ -14,6 +30,11 @@ function getAnalyticsBiasExpression() {
   };
 }
 
+/**
+ * Controller: getAllArticles
+ * Motive: Retrieves all articles from the database with optional category filtering,
+ * sorted descending by creation and publication date.
+ */
 const getAllArticles = async (req, res) => {
   try {
     const category =
@@ -32,6 +53,11 @@ const getAllArticles = async (req, res) => {
   }
 };
 
+/**
+ * Controller: getScrapedArticles
+ * Motive: Fetches articles that have at least completed web scraping or analysis
+ * (processingStatus: 'scraped', 'analyzed', or 'bias_analyzed') with optional category filter.
+ */
 const getScrapedArticles = async (req, res) => {
   try {
     const category =
@@ -55,6 +81,11 @@ const getScrapedArticles = async (req, res) => {
   }
 };
 
+/**
+ * Controller: getNewsArticles
+ * Motive: Retrieves ready-to-display news articles (either NLP & bias analyzed or verified PDF uploads),
+ * with optional category filtering and result limits for feed/homepage display.
+ */
 const getNewsArticles = async (req, res) => {
   try {
     const category =
@@ -91,6 +122,11 @@ const getNewsArticles = async (req, res) => {
   }
 };
 
+/**
+ * Controller: getCategoryBiasAnalytics
+ * Motive: Aggregates average bias scores and article volumes grouped by category
+ * for all bias-analyzed articles to power comparative charts.
+ */
 const getCategoryBiasAnalytics = async (req, res) => {
   try {
     const analytics = await Article.aggregate([
@@ -146,6 +182,12 @@ const getCategoryBiasAnalytics = async (req, res) => {
   }
 };
 
+/**
+ * Controller: getBiasSummaryAnalytics
+ * Motive: Powers the analytics dashboard by concurrently aggregating 7 distinct metrics:
+ * category averages, overall bias stats, most biased article, top neutral sources,
+ * 7-day bias trends, source publication volume, and political lean distribution.
+ */
 const getBiasSummaryAnalytics = async (req, res) => {
   try {
     const matchStage = {
@@ -446,6 +488,11 @@ const getBiasSummaryAnalytics = async (req, res) => {
   }
 };
 
+/**
+ * Controller: getRecommendedArticles
+ * Motive: Generates contextual recommendations for a given article (by ID), matching
+ * similar category and sentiment first, with a fallback to category-only matches.
+ */
 const getRecommendedArticles = async (req, res) => {
   try {
     const article = await Article.findById(req.params.articleId);

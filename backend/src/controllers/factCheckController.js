@@ -1,3 +1,11 @@
+// ==========================================
+// FACT CHECK CONTROLLER OVERVIEW:
+// ==========================================
+// This controller does NOT use an internal service file; instead, it directly integrates with:
+// 1. Google Fact Check Tools API (via axios): searches public fact-checks by verified publishers.
+// 2. Web scraper (via cheerio): extracts thumbnail preview images from fact-check source URLs.
+// ==========================================
+
 const axios = require("axios");
 const cheerio = require("cheerio");
 
@@ -5,6 +13,12 @@ const FACTCHECK_API_URL =
   "https://factchecktools.googleapis.com/v1alpha1/claims:search";
 const DEFAULT_PAGE_SIZE = 20;
 
+/**
+ * Helper: getApiKey
+ * What it does:
+ * - Reads the Google Fact Check API Key from environment variables (.env).
+ * - Throws a descriptive error if the key has not been configured.
+ */
 function getApiKey() {
   const key = process.env.GOOGLE_FACTCHECK_API_KEY;
 
@@ -15,9 +29,14 @@ function getApiKey() {
   return key;
 }
 
+/**
+ * Helper: extractImage
+ * What it does:
+ * - Google's Fact Check API doesn't provide thumbnail images directly.
+ * - This function extracts the publisher's website domain and generates a high-res favicon URL
+ *   via Google's Favicon service as a fallback visual logo.
+ */
 function extractImage(review) {
-  // Google Fact Check API doesn't return images directly.
-  // Use the publisher's favicon as a fallback visual.
   const site = review?.publisher?.site || "";
 
   if (!site) {
@@ -35,6 +54,12 @@ function extractImage(review) {
   }
 }
 
+/**
+ * Helper: mapClaim
+ * What it does:
+ * - Takes raw claim data returned by the Google API and formats it into a clean, predictable
+ *   structure that the frontend UI can easily display (claim text, claimant, rating, publisher, URL).
+ */
 function mapClaim(claim, index) {
   const review =
     Array.isArray(claim.claimReview) && claim.claimReview.length > 0
@@ -56,6 +81,15 @@ function mapClaim(claim, index) {
   };
 }
 
+/**
+ * Controller: searchFactChecks
+ * What it does:
+ * 1. Reads the search 'query', 'pageSize', 'languageCode', and 'pageToken' from query params.
+ * 2. Checks that 'query' is not empty (returns 400 Bad Request if missing).
+ * 3. Sends a GET request to Google's Fact Check Tools API with the configured API key.
+ * 4. Transforms each claim found using mapClaim().
+ * 5. Returns a list of structured fact-checks along with pagination tokens.
+ */
 const searchFactChecks = async (req, res) => {
   try {
     const query = String(req.query.query || "").trim();
@@ -118,6 +152,14 @@ const searchFactChecks = async (req, res) => {
   }
 };
 
+/**
+ * Controller: fetchArticleImage
+ * What it does:
+ * 1. Takes an external article URL from req.query.url.
+ * 2. Fetches the article's web page HTML using axios with a browser User-Agent.
+ * 3. Uses Cheerio to scrape the meta tag <meta property="og:image"> or <meta name="twitter:image">.
+ * 4. Resolves relative URLs to absolute URLs and returns the image URL for article card previews.
+ */
 const fetchArticleImage = async (req, res) => {
   try {
     const targetUrl = req.query.url;

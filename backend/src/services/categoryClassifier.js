@@ -1,3 +1,8 @@
+//This code is basically a news article categorization system. 
+// It looks at the article's source + text + existing category and
+// decides its final category, subCategory, and sourceGroup.
+
+
 const { rssFeeds } = require("../config/rssFeeds");
 
 const FEED_GROUP_CATEGORY_MAP = {
@@ -178,6 +183,15 @@ const GENERAL_CATEGORY_KEYWORDS = {
     "mental health",
   ],
 };
+// motive is to convert the legacy category to the new category
+
+//reason: earlier there was no politics and stocks category
+//but we need to add the politics and stocks category
+//so we added the politics and stocks category from the rssFeeds.js
+//but earlier the frontend was using the legacy category
+//when we introduced the new category from the rssFeeds.js, the frontend was not able to display the articles
+//so to make it backward compatible, we are using this map to convert the legacy category to the new category
+
 
 const LEGACY_CATEGORY_MAP = {
   indianpolitics: "politics",
