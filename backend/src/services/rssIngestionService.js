@@ -1,4 +1,9 @@
-const Parser = require("rss-parser");
+//This code is an RSS article ingestion system. 
+// It selects RSS feeds, fetches articles, skips duplicates, 
+// adds source metadata, saves new articles to MongoDB, and stops after collecting 3 new articles.
+
+
+const Parser = require("rss-parser");      //downloads/parses RSS feeds.
 const Article = require("../models/Article");
 const { rssFeeds } = require("../config/rssFeeds");
 const { selectFeedsForCycle } = require("./feedSelector");
@@ -125,10 +130,6 @@ async function fetchArticleForCategory(selectedFeed) {
 
   return null;
 }
-
-
-
-
 
 //////////////////////////// Read this function - createCategoryFetcher ///////////////////////////////////////////
 

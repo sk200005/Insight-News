@@ -1,3 +1,6 @@
+// This utility maps media source names to political bias categories (left/center/right) 
+// and assigns numerical 'lean' scores for mathematical calculations.
+
 const sourceBiasMap = {
   "The Hindu": "center-left",
   "The Hindu Business": "center-left",
