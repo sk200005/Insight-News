@@ -1,5 +1,6 @@
 import React, { memo, useMemo, useState } from "react";
 import BiasInsightPanel from "./BiasInsightPanel";
+import api from "../api/axios";
 
 function formatCategory(category) {
   if (!category) {
@@ -122,6 +123,22 @@ function ArticleCard({ article }) {
   const previewText = getPreviewText(article);
   const summaryPoints = getSummaryPoints(article);
   const [expanded, setExpanded] = useState(false);
+  const [relatedArticles, setRelatedArticles] = useState(null);
+  const [loadingRelated, setLoadingRelated] = useState(false);
+
+  const loadRelatedArticles = async (e) => {
+    e.stopPropagation();
+    if (relatedArticles) return; // already loaded
+    try {
+      setLoadingRelated(true);
+      const res = await api.get(`/news/cluster/${article.eventClusterId}?excludeId=${article._id}`);
+      setRelatedArticles(res.data);
+    } catch (error) {
+      console.error("Failed to load related articles", error);
+    } finally {
+      setLoadingRelated(false);
+    }
+  };
 
   const toggleExpand = () => {
     setExpanded((prev) => !prev);
@@ -154,7 +171,7 @@ function ArticleCard({ article }) {
   return (
     <div
         className={`deferred-card group relative cursor-pointer overflow-hidden rounded-2xl border border-white/60 bg-white/95 shadow-[0_10px_28px_rgba(15,23,42,0.10)] transition-[max-height,transform,box-shadow,border-color,background-color] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:scale-[1.001] hover:border-slate-200 hover:bg-white hover:shadow-[0_16px_34px_rgba(15,23,42,0.12)] focus-visible:-translate-y-0.5 focus-visible:scale-[1.001] focus-visible:border-cyan-300 focus-visible:bg-white focus-visible:shadow-[0_18px_38px_rgba(34,211,238,0.16)] focus-visible:outline-none ${
-        expanded ? "max-h-[2500px] lg:max-h-[1180px]" : "max-h-[800px] lg:max-h-[260px]"
+        expanded ? "max-h-[3000px] lg:max-h-[1500px]" : "max-h-[800px] lg:max-h-[260px]"
       }`}
       onClick={toggleExpand}
       onKeyDown={handleKeyDown}
@@ -267,6 +284,66 @@ function ArticleCard({ article }) {
         {expanded ? (
           <div className="border-t border-gray-200/90 px-5 py-6 sm:px-7">
             <BiasInsightPanel bias={bias} />
+            
+            {article.eventClusterId && (
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800">Related Coverage</h3>
+                  {!relatedArticles && (
+                    <button
+                      onClick={loadRelatedArticles}
+                      disabled={loadingRelated}
+                      className="text-sm font-medium text-sky-600 hover:text-sky-700 disabled:opacity-50 transition-colors"
+                    >
+                      {loadingRelated ? "Loading..." : "Load Related Articles"}
+                    </button>
+                  )}
+                </div>
+                
+                {relatedArticles && relatedArticles.length === 0 && (
+                  <p className="text-sm text-gray-500">No related articles found for this event.</p>
+                )}
+                
+                {relatedArticles && relatedArticles.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {relatedArticles.map((relArt) => {
+                      const relBias = relArt.bias || {};
+                      const relScore = Number(relBias.biasScoreFinal ?? relBias.biasScore ?? relArt.biasScore ?? 0);
+                      const relLevelMeta = getBiasLevelMeta(relScore);
+                      const relLean = normalizeLean(relBias.politicalLean);
+                      
+                      return (
+                        <div key={relArt._id} className="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{relArt.source}</span>
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getLeanBadgeClass(relLean)}`}>
+                                {relLean}
+                              </span>
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${relLevelMeta.className}`}>
+                                {Math.round(relScore * 100)}%
+                              </span>
+                            </div>
+                          </div>
+                          <h4 className="text-sm font-semibold text-gray-800 mb-2 line-clamp-2">{relArt.title}</h4>
+                          {isExternalArticleLink(relArt.link) && (
+                            <a
+                              href={relArt.link}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Read Full Article →
+                            </a>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         ) : null}
       </div>

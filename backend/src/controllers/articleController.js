@@ -563,6 +563,35 @@ const getRecommendedArticles = async (req, res) => {
   }
 };
 
+/**
+ * Controller: getClusterArticles
+ * Motive: Fetches articles that belong to the same event cluster, optionally excluding a specific article.
+ */
+const getClusterArticles = async (req, res) => {
+  try {
+    const { clusterId } = req.params;
+    const { excludeId } = req.query;
+
+    if (!clusterId) {
+      return res.status(400).json({ error: "Cluster ID is required" });
+    }
+
+    const query = { eventClusterId: clusterId };
+    
+    if (excludeId) {
+      query._id = { $ne: excludeId };
+    }
+
+    const articles = await Article.find(query)
+      .sort({ createdAt: -1 })
+      .limit(4);
+
+    res.status(200).json(articles);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getAllArticles,
   getScrapedArticles,
@@ -570,4 +599,5 @@ module.exports = {
   getCategoryBiasAnalytics,
   getBiasSummaryAnalytics,
   getRecommendedArticles,
+  getClusterArticles,
 };
