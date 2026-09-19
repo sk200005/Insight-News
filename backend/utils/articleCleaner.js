@@ -1,3 +1,5 @@
+// It receives the scraped article text and returns cleaned text.
+
 const headerNoise = [
   "First Day First Show",
   "News and reviews from the world of cinema and streaming",

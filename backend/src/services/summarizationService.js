@@ -23,10 +23,18 @@ const MAX_INPUT_CHARS = 1800;
 const MAX_SUMMARY_CHARS = 400;
 const MAX_SUMMARY_SENTENCES = 3;
 
-function tokenize(text) {
+function tokenize(text) { 
+  //Convert a text into a clean list of meaningful keywords 
+  // by removing punctuation, short words, and stop words.
+
+  
+  //   "What is India's economy?"
+  //         ↓
+  // ["india's", "economy"]
+
   return String(text || "")
     .toLowerCase()
-    .match(/[a-z0-9']+/g)
+    .match(/[a-z0-9']+/g)   // g → find all matches
     ?.filter((word) => word.length > 2 && !STOP_WORDS.has(word)) || [];
 }
 

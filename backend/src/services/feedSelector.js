@@ -47,14 +47,26 @@ function rotateFeed(group, category) {
     return null;
   }
 
-  const lastSource = lastSelectedSources.get(category);
-  const eligibleFeeds = group.filter((feed) => feed.name !== lastSource);
-  const selectionPool = eligibleFeeds.length > 0 ? eligibleFeeds : group;
-  const selectedFeed = randomFeed(selectionPool);
+  const lastSource = lastSelectedSources.get(category);        //get source of the last fetched news
+  const eligibleFeeds = group.filter((feed) => feed.name !== lastSource);     //filter out the last fetched source
+  const selectionPool = eligibleFeeds.length > 0 ? eligibleFeeds : group;     //if no eligible feeds, take all feeds
+  const selectedFeed = randomFeed(selectionPool);           //select a random feed
 
-  lastSelectedSources.set(category, selectedFeed.name);
+  lastSelectedSources.set(category, selectedFeed.name);           //update the last fetched source
 
   return selectedFeed;
+
+  // Input
+  // const feeds = {
+  //   indianPolitics: [
+  //     { name: "The Hindu", url: "..." },
+  //     { name: "The Print", url: "..." },
+  //     { name: "OpIndia", url: "..." }
+  //   ]
+  // };
+
+  // Output
+  // { name: "The Print", url: "...", category: "indianPolitics" }
 }
 
 /**
@@ -63,9 +75,13 @@ function rotateFeed(group, category) {
  * Output: {Array} An array of selected feed objects, each annotated with its respective category, ready for ingestion.
  */
 function selectFeedsForCycle(feeds) {
+
+  //From the configured categories, it selects one feed per category.
+  
   const groupedFeeds = FEED_GROUP_ORDER
     .map((category) => {
       const selectedFeed = rotateFeed(feeds[category], category);
+      // rotateFeed() avoids selecting the same source as the previous cycle when alternatives exist.
 
       if (!selectedFeed) {
         return null;
@@ -79,6 +95,7 @@ function selectFeedsForCycle(feeds) {
     .filter(Boolean);
 
   return shuffleList(groupedFeeds).slice(0, FEEDS_PER_CYCLE);
+  // Then shuffleList() randomizes their order.
 }
 
 module.exports = { FEEDS_PER_CYCLE, randomFeed, selectFeedsForCycle };

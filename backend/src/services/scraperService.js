@@ -7,12 +7,28 @@ const Article = require("../models/Article");
 const SCRAPE_BATCH_SIZE = 3;
 const MIN_ARTICLE_CONTENT_LENGTH = 200;
 
+/**
+ * Cleans and normalizes text by replacing multiple whitespaces/newlines with a single space and trimming.
+ * Motive: Ensures scraped text is clean and uniformly formatted before saving to the database.
+ * Input: {string} text - The raw text string to normalize.
+ * Output: {string} - The cleaned and trimmed text string.
+ * Usage: Used internally by extractParagraphBlocks and buildScrapedContent.
+ */
 function normalizeParagraph(text) {
   return String(text || "")
     .replace(/\s+/g, " ")
     .trim();
 }
 
+/**
+ * Iterates through a list of CSS selectors to find and extract meaningful paragraph text from a parsed HTML document.
+ * Motive: Different news sites have different DOM structures. This tries multiple selectors and filters out common subscription boilerplate text to get the actual article content.
+ * Input: 
+ *   - {Object} $ - The loaded Cheerio HTML document.
+ *   - {Array} selectors - Array of CSS selector strings to try.
+ * Output: {Array} - Array of extracted and normalized paragraph strings. Returns empty array if none found.
+ * Usage: Used internally by buildScrapedContent to extract the main body of the article.
+ */
 function extractParagraphBlocks($, selectors) {
   for (const selector of selectors) {
     const paragraphs = $(selector)
@@ -35,6 +51,15 @@ function extractParagraphBlocks($, selectors) {
   return [];
 }
 
+/**
+ * Constructs the final comprehensive text content for an article by combining extracted paragraphs, meta descriptions, and RSS feed content.
+ * Motive: Maximizes the amount of meaningful text gathered for an article by aggregating multiple sources from the webpage, removing duplicates, and truncating to a safe length.
+ * Input: 
+ *   - {Object} $ - The loaded Cheerio HTML document.
+ *   - {Object} article - The article document containing fallback content like meta description or RSS content.
+ * Output: {string} - The combined, deduplicated, and truncated text content string (max 10000 chars).
+ * Usage: Used internally by scrapeArticles to build the 'rawContent' field for the database.
+ */
 function buildScrapedContent($, article) {
   const paragraphBlocks = extractParagraphBlocks($, [
     "article p",
@@ -66,6 +91,13 @@ function buildScrapedContent($, article) {
   return uniqueBlocks.join("\n\n").slice(0, 10000);
 }
 
+/**
+ * The main orchestrator for the scraping pipeline. Finds pending articles, fetches their URLs, and extracts their full content.
+ * Motive: Enriches partially ingested RSS articles by visiting their actual web pages and scraping the full text content and better images.
+ * Input: {Array} [articleIds=[]] - Optional array of specific article IDs to scrape. If empty, it automatically picks the latest 'pending' articles based on batch size.
+ * Output: {Object} - A result object containing success status, counts of attempted/scraped/failed articles, and their respective IDs.
+ * Usage: Expected to be called by a cron job, a background worker, or an API controller after RSS ingestion is complete.
+ */
 const scrapeArticles = async (articleIds = []) => {
   try {
     const query = {
