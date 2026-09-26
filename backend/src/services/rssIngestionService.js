@@ -320,9 +320,9 @@ function createCategoryFetcher(selectedFeed) {
  * Usage: Expected to be called by a cron job, scheduler, or an API controller to trigger the RSS ingestion pipeline.
  */
 async function ingestArticles() {
-  const selectedFeeds = selectFeedsForCycle(rssFeeds);
+  const selectedFeeds = selectFeedsForCycle(rssFeeds);      // calls rotateFeed four times to select 1 feed from each category and then shuffles them.
   const savedArticles = [];
-  const fetchers = selectedFeeds.map((feed) => createCategoryFetcher(feed));
+  const fetchers = selectedFeeds.map((feed) => createCategoryFetcher(feed));    // [{ category: 'indianPolitics', nextArticle: [Function: nextArticle] },...]
   let activeFetchers = [...fetchers];
 
   while (

@@ -131,7 +131,7 @@ Required JSON schema:
 [
   {
     "id": "article_id",
-    "politicalLean": "left | center | right",
+    "politicalLean": "left | center | right (Note: For Indian news, consider cultural nationalism as 'right' and secular/welfare-focused narratives as 'left')",
     "biasScore": 0.0,
     "framingType": "blame | crisis | hero | neutral",
     "missingPerspective": "brief missing viewpoint summary",

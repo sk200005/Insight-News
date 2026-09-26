@@ -98,7 +98,7 @@ function buildScrapedContent($, article) {
  * Output: {Object} - A result object containing success status, counts of attempted/scraped/failed articles, and their respective IDs.
  * Usage: Expected to be called by a cron job, a background worker, or an API controller after RSS ingestion is complete.
  */
-const scrapeArticles = async (articleIds = []) => {
+const scrapeArticles = async (articleIds = []) => {    
   try {
     const query = {
       processingStatus: "pending",
@@ -111,6 +111,7 @@ const scrapeArticles = async (articleIds = []) => {
     const articles = await Article.find(query)
       .sort({ publishedAt: -1 })
       .limit(SCRAPE_BATCH_SIZE);
+// -----------------------------------------------------------
     const scrapedArticleIds = [];
     const failedArticleIds = [];
 
@@ -120,11 +121,11 @@ const scrapeArticles = async (articleIds = []) => {
           timeout: 10000,
           headers: {
             "User-Agent":
-              "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"    // makes the request look like it is coming from a browser
           }
         });
 
-        const $ = cheerio.load(response.data);
+        const $ = cheerio.load(response.data);   // response.data contains the HTML.
 
         const rawContent = buildScrapedContent($, article);
 
@@ -151,7 +152,7 @@ const scrapeArticles = async (articleIds = []) => {
         failedArticleIds.push(String(article._id));
       }
     }
-
+//----------------------------------------------------------------------
     return {
       success: true,
       message: "Scraping completed",

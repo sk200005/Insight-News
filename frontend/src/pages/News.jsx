@@ -135,17 +135,21 @@ function News() {
         : `${sortedArticles.length} articles shown`,
     [category, region, sortedArticles.length]
   );
-
+// --------------------------------RELOAD Button Function---------------------------------------------------
   const reloadArticles = async () => {
+    // "Scraping", () => api.post("/scraper/run", { articleIds: ingestedArticleIds }), { optional: true }
+
     const runStep = async (label, request, { optional = false } = {}) => {
-      try {
+      try {    // optional is flag that decides whether an API failure should stop the whole pipeline or not.
+
         const response = await request();
 
         if (response?.data?.success === false) {
           throw new Error(response.data.error || response.data.message || `${label} failed.`);
         }
-
         return { ok: true, response };
+
+
       } catch (error) {
         const message = getApiErrorMessage(error);
 
@@ -251,7 +255,7 @@ function News() {
       setLoading(false);
     }
   };
-
+//--------------------------------------END--------------------------
   useEffect(() => {
     const loadArticlesByCategory = async () => {
       try {
@@ -264,7 +268,7 @@ function News() {
 
     loadArticlesByCategory();
   }, [category]);
-
+  //--------------------------------------END--------------------------
   return (
     <div className="min-h-screen bg-[linear-gradient(135deg,#374e68_0%,#425a75_45%,#4d6784_100%)]">
       <Navbar />
@@ -292,7 +296,7 @@ function News() {
                 </h1>
                 <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm font-medium text-[#7fc6ff]/80">
                   {articleCountLabel}
-                </p>
+                </p> 
               </div>
 
               <button

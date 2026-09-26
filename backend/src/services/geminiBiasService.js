@@ -30,6 +30,11 @@ function parseGeminiJson(text) {
   try {
     return JSON.parse(cleaned);
   } catch (error) {
+    
+    //Gemini may return : "Here is the result:
+    //                    "{"name":"Swayam"}
+    //                    Hope this helps!"
+
     const arrayStart = cleaned.indexOf("[");
     const arrayEnd = cleaned.lastIndexOf("]");
 
@@ -69,16 +74,16 @@ function normalizeText(value, fallback = "") {      //If empty ("") returns a de
   return normalized || fallback;
 }
 
-function normalizeLoadedLanguageCount(result) {      // takes the loadedLanguageCount as input & ensure final loadedLanguageCount is not a negative value
-  if (typeof result?.loadedLanguageCount === "number") {   // if the loadedLanguageCount is a number
-    return Math.max(0, Math.round(result.loadedLanguageCount));   // ensures the final loadedLanguageCount is not a negative value
+function normalizeLoadedLanguageCount(result) {                     // takes the loadedLanguageCount as input & ensure final loadedLanguageCount is not a negative value
+  if (typeof result?.loadedLanguageCount === "number") {            // if the loadedLanguageCount is a number
+    return Math.max(0, Math.round(result.loadedLanguageCount));     // ensures the final loadedLanguageCount is not a negative value
+  } 
+
+  if (Array.isArray(result?.loadedWords)) {                       // Is result.loadedWords an array?
+    return result.loadedWords.filter(Boolean).length;             // Boolean() converts each item to true or false (non-empty strings = true).
   }
 
-  if (Array.isArray(result?.loadedWords)) {    // if loadedWords is an array
-    return result.loadedWords.filter(Boolean).length;
-  }
-
-  return Math.max(0, Number(result?.loadedLanguageCount) || 0);
+  return Math.max(0, Number(result?.loadedLanguageCount) || 0);     // 0 -> loadedLanguageCount
 }
 
 function normalizeArticleContext(article) {    
@@ -130,7 +135,7 @@ Required JSON schema:
 [
   {
     "id": "article_id",
-    "politicalLean": "left | center | right",
+    "politicalLean": "left | center | right (Note: For Indian news, consider cultural nationalism as 'right' and secular/welfare-focused narratives as 'left')",
     "biasScore": 0.0,
     "framingType": "blame | crisis | hero | neutral",
     "missingPerspective": "brief missing viewpoint summary",
@@ -171,7 +176,7 @@ async function executeGeminiPrompt(prompt) {
   });
 
   console.log("Gemini response received");
-  await sleep(GEMINI_DELAY_MS);
+  await sleep(GEMINI_DELAY_MS);      //avoid sending requests to Gemini too quickly.
 
   return response.text;
 }
@@ -213,7 +218,7 @@ Return JSON only.
 
 {
   "id": "article_id",
-  "politicalLean": "left | center | right",
+  "politicalLean": "left | center | right (Note: For Indian news, consider cultural nationalism as 'right' and secular/welfare-focused narratives as 'left')",
   "biasScore": 0.0,
   "framingType": "blame | crisis | hero | neutral",
   "missingPerspective": "brief missing viewpoint summary",
@@ -224,6 +229,8 @@ Return JSON only.
 
 Article:
 ${String(biasText || "").slice(0, MAX_CONTEXT_LENGTH)}`;
+
+// --------------------PROMPT OVER-------------------- //
 
     const responseText = await callGeminiWithRetry(prompt);
     return parseGeminiJson(responseText);

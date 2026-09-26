@@ -232,17 +232,24 @@ const SOURCE_NAME_ALIASES = {
   "bbc news": "worldPolitics",
 };
 
-const SOURCE_NAME_TO_GROUP = Object.entries(rssFeeds).reduce(
-  (mapping, [group, feeds]) => {
-    for (const feed of feeds) {
-      mapping[feed.name.toLowerCase()] = group;
-    }
+/**
+ * Motive: Builds a fast lookup dictionary (map) to instantly find a news source's group based on its lowercase name.
+ * Input: `rssFeeds` object from the configuration file (organized by group).
+ * Output: `SOURCE_NAME_TO_GROUP` object mapping lowercase source names to their respective group.
+ */
+const SOURCE_NAME_TO_GROUP = {};
 
-    return mapping;
-  },
-  {}
-);
+for (const [group, feeds] of Object.entries(rssFeeds)) {
+  for (const feed of feeds) {
+    SOURCE_NAME_TO_GROUP[feed.name.toLowerCase()] = group;
+  }
+}
 
+/**
+ * Normalizes a legacy or arbitrary category string into a standard category format.
+ * @param {string} category - The raw category string.
+ * @returns {string} The normalized category string (e.g., 'politics', 'sports') or 'general' if not matched.
+ */
 function normalizeCategory(category = "") {
   if (!category) {
     return "general";
@@ -257,6 +264,11 @@ function normalizeCategory(category = "") {
   return LEGACY_CATEGORY_MAP[normalizedKey] || "general";
 }
 
+/**
+ * Normalizes a legacy or arbitrary source group string into a standard source group format.
+ * @param {string} sourceGroup - The raw source group string.
+ * @returns {string} The normalized source group string (e.g., 'indianPolitics') or the original if not matched.
+ */
 function normalizeSourceGroup(sourceGroup = "") {
   if (!sourceGroup) {
     return "";
@@ -271,6 +283,12 @@ function normalizeSourceGroup(sourceGroup = "") {
   return LEGACY_SOURCE_GROUP_MAP[normalizedKey] || sourceGroup;
 }
 
+/**
+ * Counts the number of times any keyword from the list appears in the text.
+ * @param {string} text - The text to search within.
+ * @param {Array<string>} keywords - The list of keywords to search for.
+ * @returns {number} The total count of matched keywords.
+ */
 function countKeywordMatches(text, keywords) {
   return keywords.reduce(
     (count, keyword) => count + (text.includes(keyword) ? 1 : 0),
@@ -278,6 +296,11 @@ function countKeywordMatches(text, keywords) {
   );
 }
 
+/**
+ * Determines if the text content relates to war based on keyword matches.
+ * @param {string} text - The text content to analyze.
+ * @returns {boolean} True if the content is classified as war-related, false otherwise.
+ */
 function isWarContent(text) {
   const warPrimaryMatches = countKeywordMatches(text, WAR_PRIMARY_KEYWORDS);
   const warContextMatches = countKeywordMatches(text, WAR_CONTEXT_KEYWORDS);
@@ -286,12 +309,23 @@ function isWarContent(text) {
   return warPrimaryMatches >= 1 || warContextMatches >= 2 || warSecondaryMatches >= 2;
 }
 
+/**
+ * Determines if the text content relates to stocks based on keyword matches.
+ * @param {string} text - The text content to analyze.
+ * @returns {boolean} True if the content is classified as stock-related, false otherwise.
+ */
 function isStockContent(text) {
   return STOCK_KEYWORDS.some((keyword) => text.includes(keyword));
 }
 
+/**
+ * Figure out the source group from the source name or an existing source group.
+ * @param {string} source - The source parameter is expected to contain a string.
+ * @param {string} existingSourceGroup - An optionally existing source group.
+ * @returns {string} The inferred source group or an empty string if it cannot be determined.
+ */
 function inferSourceGroup(source = "", existingSourceGroup = "") {
-  const normalizedExistingSourceGroup = normalizeSourceGroup(existingSourceGroup);
+  const normalizedExistingSourceGroup = normalizeSourceGroup(existingSourceGroup);    // IndianEconomy -> indianEconomy 
 
   if (normalizedExistingSourceGroup && FEED_GROUP_CATEGORY_MAP[normalizedExistingSourceGroup]) {
     return normalizedExistingSourceGroup;
@@ -306,6 +340,11 @@ function inferSourceGroup(source = "", existingSourceGroup = "") {
   );
 }
 
+/**
+ * Classifies text into a category when the source group is unknown.
+ * @param {string} text - The text content to classify.
+ * @returns {Object} An object containing the inferred `category` and `subCategory`.
+ */
 function classifyWithoutSourceGroup(text) {
   if (isWarContent(text)) {
     return { category: "war", subCategory: "" };
@@ -324,6 +363,19 @@ function classifyWithoutSourceGroup(text) {
   return { category: "general", subCategory: "" };
 }
 
+/**
+ * Determines the final category, subcategory, and source group for an article.
+ * Combines source-based grouping, keyword matching, and legacy normalization.
+ * @param {Object} articleData - The data of the article to categorize.
+ * @param {string} articleData.title - The title of the article.
+ * @param {string} articleData.summary - The summary of the article.
+ * @param {string} articleData.rawContent - The raw content of the article.
+ * @param {string} articleData.source - The source name of the article.
+ * @param {string} articleData.sourceGroup - The source group of the article.
+ * @param {string} articleData.category - The original category of the article.
+ * @param {string} articleData.subCategory - The original subcategory of the article.
+ * @returns {Object} An object containing the finalized `category`, `subCategory`, and `sourceGroup`.
+ */
 function categorizeArticle({
   title = "",
   summary = "",
@@ -367,10 +419,10 @@ function categorizeArticle({
   const normalizedCategory = normalizeCategory(category);
 
   return {
-    category:
+    category:                           // "stocks",..... sports, general, war
       classified.category !== "general" ? classified.category : normalizedCategory,
-    subCategory: subCategory || "",
-    sourceGroup: resolvedSourceGroup,
+    subCategory: subCategory || "",     //  "World Politics","Indian Politics", "World economy", "Indian Economy"
+    sourceGroup: resolvedSourceGroup,   //  "worldPolitics" ..... "indianPolitics", "worldSports", "indianEconomy"
   };
 }
 
@@ -382,3 +434,18 @@ module.exports = {
   normalizeCategory,
   normalizeSourceGroup,
 };
+
+
+
+//                     categorizeArticle({
+//                       title: "Sensex crashes by 1000 points today",
+//                       summary: "A massive sell-off in shares led to a bear market.",
+//                       source: "BBC News",
+//                       category: "business"
+//                     }); 
+                         
+//                     {
+//                       category: "stocks",..... sports, general, war
+//                       subCategory: "World Politics",.... "Indian Politics", "World economy", "Indian Economy"
+//                       sourceGroup: "worldPolitics" ..... "indianPolitics", "worldSports", "indianEconomy"
+//                     }

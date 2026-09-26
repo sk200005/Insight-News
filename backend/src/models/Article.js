@@ -130,6 +130,7 @@ const articleSchema = new mongoose.Schema({
 
 // Mongoose pre("save") middleware
 // It runs automatically before an Article document is saved to MongoDB.
+// It cleans, fills, categorizes, and synchronizes derived fields before an Article is saved to MongoDB
 articleSchema.pre("save", function setDerivedArticleFields() {
   if (!this.summaryText && this.summary) {
     this.summaryText = this.summary;
