@@ -4,7 +4,7 @@
 🚀 **[View Live Demo](https://insight-news-eight.vercel.app/)**
 ## 🎥 Demo
 
-https://github.com/user-attachments/assets/a18c7019-6eb7-402b-a955-7fecec2dd843
+https://github.com/user-attachments/assets/5931ee75-d290-4c1f-8988-8d2193622b04
 
 Insight News is an AI-powered news aggregation, summarization, and political bias analysis platform designed to process articles via RSS feeds, scrape full-text content, generate concise summaries, and analyze editorial stance and narrative bias using Large Language Models (LLMs) such as Google Gemini and Groq. 
 
