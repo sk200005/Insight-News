@@ -1,7 +1,7 @@
 # Insight News
 
 
-🚀 **[View Live Demo](https://insight-news-eight.vercel.app/)**
+🚀 **[Live Deployed Website](https://insight-news-eight.vercel.app/)**
 ## 🎥 Demo
 
 https://github.com/user-attachments/assets/5931ee75-d290-4c1f-8988-8d2193622b04
