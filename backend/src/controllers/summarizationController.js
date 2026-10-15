@@ -28,6 +28,16 @@ const BATCH_SIZE = 3;
  */
 async function summarizePendingArticles(req, res) {
   try {
+    // If text or content is directly provided in the request body, summarize it immediately
+    if (req.body?.text || req.body?.content) {
+      const rawText = req.body.text || req.body.content;
+      const result = await summarizeArticle(rawText);
+      return res.json({
+        success: true,
+        ...result,
+      });
+    }
+
     const articleIds = Array.isArray(req.body?.articleIds) ? req.body.articleIds : [];
     const query = {
       rawContent: { $exists: true, $ne: "" },
@@ -56,7 +66,7 @@ async function summarizePendingArticles(req, res) {
 
     for (const article of articles) {
       try {
-        const { summaryText, summaryPoints } = await summarizeArticle(article.rawContent);
+        const { summaryText, summaryPoints, metrics } = await summarizeArticle(article.rawContent);
 
         if (!summaryText) {
           continue;
@@ -65,6 +75,9 @@ async function summarizePendingArticles(req, res) {
         article.summary = summaryText;
         article.summaryText = summaryText;
         article.summaryPoints = summaryPoints;
+        if (metrics) {
+          article.summaryMetrics = metrics;
+        }
         article.processingStatus = "analyzed";
         await article.save();
         summarized++;

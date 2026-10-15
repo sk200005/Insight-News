@@ -74,6 +74,59 @@ function scoreSentence(sentence, index, sentenceCount, frequencies) {
 
   return keywordScore * uniqueWordBoost * positionBoost * lengthPenalty * endingBoost;
 }
+
+function getEmptyMetrics() {
+  return {
+    originalLength: 0,
+    summaryLength: 0,
+    compressionRatio: "0%",
+    sentencesRetained: "0/0",
+    averageScore: 0,
+    keywordCoverage: "0%",
+  };
+}
+
+function calculateSummaryMetrics({
+  rawContent = "",
+  summaryText = "",
+  totalCandidateSentences = 0,
+  selectedSentencesCount = 0,
+  selectedItems = [],
+  frequencies = new Map(),
+}) {
+  const originalLength = String(rawContent || "").length;
+  const summaryLength = String(summaryText || "").length;
+
+  const ratio = originalLength > 0
+    ? Math.max(0, (1 - summaryLength / originalLength) * 100)
+    : 0;
+  const compressionRatio = `${ratio.toFixed(1)}%`;
+
+  const avgScore = selectedItems.length > 0
+    ? selectedItems.reduce((acc, item) => acc + (item.score || 0), 0) / selectedItems.length
+    : 0;
+
+  const sortedKeywords = Array.from(frequencies.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([word]) => word);
+
+  const summaryWords = new Set(tokenize(summaryText));
+  const matchedKeywords = sortedKeywords.filter((word) => summaryWords.has(word));
+  const keywordCoverage = sortedKeywords.length > 0
+    ? `${((matchedKeywords.length / sortedKeywords.length) * 100).toFixed(1)}%`
+    : "100%";
+
+  return {
+    originalLength,
+    summaryLength,
+    compressionRatio,
+    sentencesRetained: `${selectedSentencesCount}/${totalCandidateSentences}`,
+    averageScore: Number(avgScore.toFixed(2)),
+    keywordCoverage,
+  };
+}
+
 //-------------------------IMPORTANT----------------------------------------------
 function selectSummarySentences(sentences, maxSentences = MAX_SUMMARY_SENTENCES) {
   const frequencies = buildWordFrequencies(sentences);
@@ -83,11 +136,17 @@ function selectSummarySentences(sentences, maxSentences = MAX_SUMMARY_SENTENCES)
     score: scoreSentence(sentence, index, sentences.length, frequencies),
   }));
 
-  return ranked
+  const selectedItems = ranked
     .sort((a, b) => b.score - a.score)
     .slice(0, maxSentences)
-    .sort((a, b) => a.index - b.index)
-    .map((item) => item.sentence);
+    .sort((a, b) => a.index - b.index);
+
+  return {
+    selectedSentences: selectedItems.map((item) => item.sentence),
+    selectedItems,
+    frequencies,
+    ranked,
+  };
 }
 
 function cleanSummary(summary) {
@@ -120,6 +179,7 @@ async function summarizeArticle(rawContent) {
     return {
       summaryText: "",
       summaryPoints: [],
+      metrics: getEmptyMetrics(),
     };
   }
 
@@ -131,6 +191,7 @@ async function summarizeArticle(rawContent) {
     return {
       summaryText: "",
       summaryPoints: [],
+      metrics: getEmptyMetrics(),
     };
   }
 
@@ -139,33 +200,54 @@ async function summarizeArticle(rawContent) {
     .filter((sentence) => sentence.length > 40);
 
   let summary;
+  let selectedItems = [];
+  let frequencies = new Map();
 
   if (sentences.length === 0) {
     summary = summaryInput;
   } else if (sentences.length <= MAX_SUMMARY_SENTENCES) {
+    frequencies = buildWordFrequencies(sentences);
+    selectedItems = sentences.map((sentence, index) => ({
+      sentence,
+      index,
+      score: scoreSentence(sentence, index, sentences.length, frequencies),
+    }));
     summary = sentences.join(" ");
   } else {
-    const summarySentences = selectSummarySentences(sentences, MAX_SUMMARY_SENTENCES);
-    summary = summarySentences.join(" ").trim();
+    const selection = selectSummarySentences(sentences, MAX_SUMMARY_SENTENCES);
+    frequencies = selection.frequencies;
+    selectedItems = selection.selectedItems;
+    summary = selection.selectedSentences.join(" ").trim();
 
     if (summary.length < 120) {
+      selectedItems = selection.ranked.slice(0, MAX_SUMMARY_SENTENCES);
       summary = sentences.slice(0, MAX_SUMMARY_SENTENCES).join(" ").trim();
     }
   }
 
   const summaryText = limitSummaryLength(cleanSummary(summary));
   const summaryPoints = generateBulletSummary(summaryText);
+  const metrics = calculateSummaryMetrics({
+    rawContent,
+    summaryText,
+    totalCandidateSentences: sentences.length,
+    selectedSentencesCount: selectedItems.length || (summaryPoints.length || 0),
+    selectedItems,
+    frequencies,
+  });
 
-  console.log("Generated professional summary");
+  console.log("Generated professional summary with metrics");
 
   return {
     summaryText,
     summaryPoints,
+    metrics,
   };
 }
 
 module.exports = {
   cleanSummary,
+  calculateSummaryMetrics,
   formatSummaryPoints: generateBulletSummary,
   prepareTextForSummary,
   summarizeArticle,

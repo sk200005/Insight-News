@@ -41,6 +41,14 @@ const articleSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  summaryMetrics: {
+    originalLength: { type: Number, default: 0 },
+    summaryLength: { type: Number, default: 0 },
+    compressionRatio: { type: String, default: "" },
+    sentencesRetained: { type: String, default: "" },
+    averageScore: { type: Number, default: 0 },
+    keywordCoverage: { type: String, default: "" }
+  },
   category: {
     type: String,
     default: "general"

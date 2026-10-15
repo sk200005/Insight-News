@@ -129,10 +129,11 @@ async function createArticleFromPdf({ buffer, originalname, llmProvider, publicB
     return existingArticle;
   }
 
-  const { summaryText, summaryPoints } = existingArticle?.summary
+  const { summaryText, summaryPoints, metrics } = existingArticle?.summary
     ? {
         summaryText: existingArticle.summaryText || existingArticle.summary,
         summaryPoints: existingArticle.summaryPoints || [],
+        metrics: existingArticle.summaryMetrics || null,
       }
     : await summarizeArticle(extractedText);
 
@@ -151,6 +152,9 @@ async function createArticleFromPdf({ buffer, originalname, llmProvider, publicB
   article.summary = summaryText;
   article.summaryText = summaryText;
   article.summaryPoints = summaryPoints;
+  if (metrics) {
+    article.summaryMetrics = metrics;
+  }
   article.sourceLean = article.sourceLean || "center";
   article.articleHash = article.articleHash || generateArticleHash(`${article.title}${summaryText}`);
   article.processingStatus = "analyzed";
