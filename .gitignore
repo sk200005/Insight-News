@@ -6,3 +6,12 @@ build/
 venv/
 __pycache__/
 *.pyc
+
+# System files
+.DS_Store
+
+# AI tools & output
+.agents/
+brag-output/
+skills-lock.json
+.nvmrc

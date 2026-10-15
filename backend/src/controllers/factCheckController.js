@@ -191,3 +191,33 @@ const fetchArticleImage = async (req, res) => {
 };
 
 module.exports = { searchFactChecks, fetchArticleImage };
+
+
+
+
+
+
+
+
+// {
+//   "claims": [
+//     {
+//       "text": "EVMs were hacked during the recent elections.",
+//       "claimant": "Social Media Users",
+//       "claimDate": "2024-05-12T00:00:00Z",
+//       "claimReview": [
+//         {
+//           "publisher": {
+//             "name": "Alt News",
+//             "site": "altnews.in"
+//           },
+//           "url": "https://www.altnews.in/evm-hacking-claims-debunked",
+//           "title": "False claims about EVM hacking go viral",
+//           "reviewDate": "2024-05-15T00:00:00Z",
+//           "textualRating": "False",
+//           "languageCode": "en"
+//         }
+//       ]
+//     }
+//   ]
+// }
