@@ -129,6 +129,7 @@ const getNewsArticles = async (req, res) => {
 
     res.status(200).json(articles);  //returns the articles as JSON
   } catch (error) {
+    console.error("Error in getNewsArticles:", error.message);
     res.status(500).json({ error: error.message });
   }
 

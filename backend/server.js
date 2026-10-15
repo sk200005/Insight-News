@@ -67,9 +67,10 @@ app.use(express.json());
 app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
 
 mongoose.connect(mongoUri, {
+  dbName: process.env.DB_NAME || "insight-ai",
   serverSelectionTimeoutMS: 10000,                                           //Try to connect to the MongoDB server for up to 10 seconds
 })
-  .then(() => console.log("MongoDB Connected"))
+  .then(() => console.log(`MongoDB Connected (database: ${mongoose.connection.name})`))
   .catch(err => {
     console.error("MongoDB connection failed:", err.message);
   });
