@@ -34,12 +34,6 @@ git pull --rebase origin main
 
 
 
-Love you
-
-
-
-
-
 
 
 
