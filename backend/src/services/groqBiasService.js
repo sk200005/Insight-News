@@ -180,6 +180,7 @@ async function executeGroqPrompt(prompt, modelOverride) {
       ],
       temperature: GROQ_TEMPERATURE,
       response_format: { type: "json_object" },
+      max_tokens: 800,
     });
 
     console.log(`Groq response received using model: ${model}`);
