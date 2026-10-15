@@ -42,6 +42,36 @@ function getSummaryPoints(article) {
     .slice(0, 3);
 }
 
+function getSummaryMetrics(article) {
+  const metrics = article?.summaryMetrics || {};
+  let compressionRatio = metrics.compressionRatio;
+  let sentencesRetained = metrics.sentencesRetained;
+  let keywordCoverage = metrics.keywordCoverage;
+
+  // Fallback calculation for articles without stored metrics
+  if (!compressionRatio || compressionRatio === "0%") {
+    const origLen = Number(metrics.originalLength) || (article?.rawContent || article?.content || "").length;
+    const sumLen = Number(metrics.summaryLength) || (article?.summaryText || article?.summary || "").length;
+    if (origLen > 0 && sumLen > 0 && origLen > sumLen) {
+      const ratio = Math.max(0, (1 - sumLen / origLen) * 100);
+      compressionRatio = `${ratio.toFixed(0)}%`;
+    }
+  }
+
+  if (!sentencesRetained) {
+    const pts = getSummaryPoints(article);
+    if (pts.length > 0) {
+      sentencesRetained = `${pts.length} pts`;
+    }
+  }
+
+  return {
+    compressionRatio: compressionRatio && compressionRatio !== "0%" ? compressionRatio : null,
+    sentencesRetained: sentencesRetained || null,
+    keywordCoverage: keywordCoverage && keywordCoverage !== "0%" && keywordCoverage !== "" ? keywordCoverage : null,
+  };
+}
+
 function normalizeLean(lean) {
   const normalized = String(lean || "").trim().toLowerCase();
   return normalized || "center";
@@ -166,12 +196,16 @@ function ArticleCard({ article }) {
     () => getPerspectiveBalanceMeta(perspectiveBalanceScore),
     [perspectiveBalanceScore]
   );
+  const summaryMetrics = useMemo(
+    () => getSummaryMetrics(article),
+    [article]
+  );
   const articleLink = isExternalArticleLink(article.link) ? article.link : "";
 
   return (
     <div
         className={`deferred-card group relative cursor-pointer overflow-hidden rounded-2xl border border-white/60 bg-white/95 shadow-[0_10px_28px_rgba(15,23,42,0.10)] transition-[max-height,transform,box-shadow,border-color,background-color] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:scale-[1.001] hover:border-slate-200 hover:bg-white hover:shadow-[0_16px_34px_rgba(15,23,42,0.12)] focus-visible:-translate-y-0.5 focus-visible:scale-[1.001] focus-visible:border-cyan-300 focus-visible:bg-white focus-visible:shadow-[0_18px_38px_rgba(34,211,238,0.16)] focus-visible:outline-none ${
-        expanded ? "max-h-[3000px] lg:max-h-[1500px]" : "max-h-[800px] lg:max-h-[260px]"
+        expanded ? "max-h-[3000px] lg:max-h-[1500px]" : "max-h-[900px] lg:max-h-[300px]"
       }`}
       onClick={toggleExpand}
       onKeyDown={handleKeyDown}
@@ -262,21 +296,48 @@ function ArticleCard({ article }) {
                 </span>
               </div>
 
-              {articleLink ? (
-                <a
-                  href={articleLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm font-medium text-blue-600 transition-[color,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-blue-700 hover:underline group-hover:translate-x-0.5 group-focus-visible:translate-x-0.5"
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  Read Full Article →
-                </a>
-              ) : (
-                <span className="text-sm font-medium text-slate-500">
-                  Uploaded PDF Article
-                </span>
-              )}
+              <div className="flex flex-col items-end gap-2.5">
+                {articleLink ? (
+                  <a
+                    href={articleLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm font-medium text-blue-600 transition-[color,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-blue-700 hover:underline group-hover:translate-x-0.5 group-focus-visible:translate-x-0.5"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    Read Full Article →
+                  </a>
+                ) : (
+                  <span className="text-sm font-medium text-slate-500">
+                    Uploaded PDF Article
+                  </span>
+                )}
+
+                {summaryMetrics.compressionRatio && (
+                  <div
+                    title="Summarization Efficiency Metrics"
+                    className="flex flex-wrap items-center gap-1.5 lg:justify-end text-xs"
+                  >
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-1 font-medium text-slate-700 ring-1 ring-inset ring-slate-200/80 transition-colors group-hover:bg-slate-100">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      <span className="font-semibold text-slate-900">{summaryMetrics.compressionRatio}</span>
+                      <span className="text-slate-500">compressed</span>
+                    </span>
+
+                    {summaryMetrics.sentencesRetained && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-slate-50/80 px-2 py-1 font-medium text-slate-600 ring-1 ring-inset ring-slate-200/60">
+                        <span>{summaryMetrics.sentencesRetained} sentences</span>
+                      </span>
+                    )}
+
+                    {summaryMetrics.keywordCoverage && (
+                      <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-1 font-medium text-sky-700 ring-1 ring-inset ring-sky-200/60">
+                        <span>{summaryMetrics.keywordCoverage} keywords</span>
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
