@@ -46,7 +46,7 @@ jobs:
           JSON
 
           COMMAND_ID=$(aws ssm send-command \
-            --instance-ids "i-04fbbf869183df9b4" \
+            --instance-ids "i-0d98f864048ba66cc" \
             --document-name "AWS-RunShellScript" \
             --parameters file:///tmp/ssm-parameters.json \
             --comment "GitHub Actions backend deployment" \
@@ -63,7 +63,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          INSTANCE_ID="i-04fbbf869183df9b4"
+          INSTANCE_ID="i-0d98f864048ba66cc"
 
           for attempt in $(seq 1 60); do
             STATUS=$(aws ssm get-command-invocation \
