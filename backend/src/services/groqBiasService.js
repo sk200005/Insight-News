@@ -2,7 +2,15 @@ const { OpenAI } = require("openai");
 
 let ai;
 
-const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+const DEFAULT_GROQ_MODEL = "qwen/qwen3.8-27b";
+function getGroqModel() {
+  const model = (process.env.GROQ_MODEL || "").trim();
+  if (!model || model === "llama-3.3-70b-versatile") {
+    return DEFAULT_GROQ_MODEL;
+  }
+  return model;
+}
+
 const GROQ_TEMPERATURE = 0.1;
 const GROQ_DELAY_MS = 2000;
 const MAX_CONTEXT_LENGTH = 1800;
@@ -160,22 +168,34 @@ function isRateLimitError(error) {
   );
 }
 
-async function executeGroqPrompt(prompt) {
+async function executeGroqPrompt(prompt, modelOverride) {
   const client = getGroqClient();
-  const response = await client.chat.completions.create({
-    model: GROQ_MODEL,
-    messages: [
-      { role: "system", content: "You are a helpful assistant that strictly responds with valid JSON matching the requested schema. Do not output anything other than JSON." },
-      { role: "user", content: prompt }
-    ],
-    temperature: GROQ_TEMPERATURE,
-    response_format: { type: "json_object" },
-  });
+  const model = modelOverride || getGroqModel();
+  try {
+    const response = await client.chat.completions.create({
+      model,
+      messages: [
+        { role: "system", content: "You are a helpful assistant that strictly responds with valid JSON matching the requested schema. Do not output anything other than JSON." },
+        { role: "user", content: prompt }
+      ],
+      temperature: GROQ_TEMPERATURE,
+      response_format: { type: "json_object" },
+    });
 
-  console.log("Groq response received");
-  await sleep(GROQ_DELAY_MS);
+    console.log(`Groq response received using model: ${model}`);
+    await sleep(GROQ_DELAY_MS);
 
-  return response.choices[0].message.content;
+    return response.choices[0].message.content;
+  } catch (error) {
+    if (
+      (error?.status === 404 || error?.code === 404 || String(error?.message).includes("does not exist")) &&
+      model !== DEFAULT_GROQ_MODEL
+    ) {
+      console.warn(`Groq model ${model} unavailable (404). Falling back to ${DEFAULT_GROQ_MODEL}...`);
+      return executeGroqPrompt(prompt, DEFAULT_GROQ_MODEL);
+    }
+    throw error;
+  }
 }
 
 async function callGroqWithRetry(prompt, retries = 3) {
