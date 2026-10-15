@@ -67,14 +67,14 @@ function scoreSentence(sentence, index, sentenceCount, frequencies) {
     0
   ) / words.length;
 
-  const uniqueWordBoost = new Set(words).size / words.length;
+  const uniqueWordBoost = new Set(words).size / words.length;      // avoid repetition of words
   const positionBoost = index === 0 ? 1.35 : index < 3 ? 1.15 : 1;
   const lengthPenalty = words.length > 45 ? 0.9 : words.length < 8 ? 0.75 : 1;
   const endingBoost = index === sentenceCount - 1 ? 1.05 : 1;
 
   return keywordScore * uniqueWordBoost * positionBoost * lengthPenalty * endingBoost;
 }
-
+//-------------------------IMPORTANT----------------------------------------------
 function selectSummarySentences(sentences, maxSentences = MAX_SUMMARY_SENTENCES) {
   const frequencies = buildWordFrequencies(sentences);
   const ranked = sentences.map((sentence, index) => ({
