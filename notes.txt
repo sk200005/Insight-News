@@ -28,10 +28,9 @@ display in frontend
 
 
 
-git pull --rebase origin main
+on conflict : git pull --rebase origin main
 
-
-
+on AWS Code pull : git pull origin main
 
 
 
